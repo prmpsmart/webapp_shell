@@ -37,7 +37,7 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 
 - [ ] **Recheck the name.** `webapp-shell` and `webapp_shell` were free on PyPI on 28 October 2026.
 - [ ] **Metadata in `pyproject.toml`:** URLs (repository, documentation `prmpsmart.github.io/webapp_shell`, issues), classifiers (Python 3.13, OS, framework), keywords, a final description. 
-- [ ] **`CHANGELOG.md`, `README.md` polish** (badges only when the CI exists), a short `CONTRIBUTING.md` if wanted.
+- [ ] **`README.md` polish** (badges only when the CI exists), a short `CONTRIBUTING.md` if wanted.
 - [ ] **GitHub repository** `prmpsmart/webapp_shell` (public), push the first commit.
 - [ ] **CI (GitHub Actions):** `pytest` and `ruff` on Linux, macOS and Windows for each push, on Python 3.13.
 - [ ] **Build and check:** `python -m build`, `twine check dist/*`; the wheel holds `webapp_shell` and nothing else; the extras install.
