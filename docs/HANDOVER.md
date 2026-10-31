@@ -94,3 +94,13 @@ together: the page reported `native: acmeNative` and its title from the bridge. 
 ## What is left before PyPI
 
 Tracked in `REMAINING.md`, which is the list to work from (decisions, code, documentation and example site, checks never run, publishing steps, and Pixeval adopting the library).
+
+## The documentation site (`examples/site`, started 31 October 2026)
+
+React + Vite + TypeScript, built into `examples/site/frontend/dist` (committed). Run `npm install && npm run build` in `examples/site` after changing anything under `src/`; `npm run dev` serves it for design work (the bridge then reports a plain browser).
+
+- `src/pages.ts` is the list of pages (an enum `PageId`, `Section`); a new page is a component plus one entry there.
+- Each live feature page shows three snippets (`CodeTabs`): the frontend and the backend files are imported raw (`?raw`), so the shown code is the running code. The shell tab is `app.py`.
+- `docs_backend/` is the site's backend (contract plus one route per demonstration); `app.py` is the launcher. Slug `docs`, so the native global is `docsNative`.
+- `src/bridge/` is a copy made with `python -m webapp_shell bridge --out examples/site/src/bridge` (prettier ignores it; a test keeps it equal to the package's file).
+- `tests/test_example_site.py`: backend through `BackendProcess`, the Getting started sample executed, the committed build checked against the code it shows, and a headless Qt run of the whole site.

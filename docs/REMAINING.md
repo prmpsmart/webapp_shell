@@ -25,9 +25,9 @@ At a glance: **A** decisions for the owner, **B** code still to write, **C** the
 ## C. The example site and the documentation
 
 - [x] **`examples/minimal/`: a minimal app** (31 October 2026): a Starlette backend that follows the contract, a one-page frontend with the bridge copied in, a fifteen-line launcher, a README. Run for real by `tests/test_example_minimal.py`.
-- [ ] **The documentation website** as the example: a modern docs look (sidebar, search, code samples, light and dark), opened by the library's own shell, a live demonstration of every capability: choose a file or folder, save as, reveal, open a link, zoom, boot colours, token handover and health, a running backend job, the backend stopping.
-- [ ] **Three snippets per feature page:** frontend, backend and shell (`12-webapp-shell.md` of the Pixeval repository, section 8).
-- [ ] **Committed `dist` of that frontend**, so running the example needs only Python.
+- [ ] **The documentation website** as the example (started 31 October 2026, `examples/site`, React + Vite + TypeScript: frame with sidebar, search, light and dark; Overview, Getting started, Choose a file; still to add: Save as, Reveal, Open a link, Zoom, Boot colours, token and health, a backend job, the backend stopping): a modern docs look (sidebar, search, code samples, light and dark), opened by the library's own shell, a live demonstration of every capability: choose a file or folder, save as, reveal, open a link, zoom, boot colours, token handover and health, a running backend job, the backend stopping.
+- [x] **Three snippets per feature page** (the `CodeTabs` component; the shown code is the real file, imported raw, so it cannot drift; done for Choose a file): frontend, backend and shell (`12-webapp-shell.md` of the Pixeval repository, section 8).
+- [x] **Committed `dist` of that frontend** (`.gitignore` now keeps `examples/*/frontend/dist`; a test fails if the build is stale), so running the example needs only Python.
 - [ ] **Guides** (pages of the site, also Markdown in `docs/`): getting started; the contract (exact names, token handover, health, shutdown); configuring identity and backend; native functions; freezing with PyInstaller (the freeze profile in Pixeval is the model); troubleshooting (Windows icon format, the pywebview API walk, console noise, WebView2).
 - [ ] **Reference** generated from the config classes and docstrings.
 - [ ] **A page for frontend developers:** what the page may assume (the token cookie, the bridge object) and nothing else.
