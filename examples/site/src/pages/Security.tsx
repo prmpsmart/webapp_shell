@@ -30,8 +30,8 @@ export function Security() {
           <b>Only the health path is open.</b> It tells the shell the backend is ready and says nothing else.
         </li>
         <li>
-          <b>WebSockets</b> follow the same rule: <code>TokenValidator.is_valid_connection</code> checks
-          header, cookie or query, and the connection is closed with code 4401 otherwise.
+          <b>WebSockets</b> follow the same rule: <code>WebSocketGuard.accept(socket)</code> checks the origin
+          and the token (header, cookie or query), and closes the connection with code 4401 otherwise.
         </li>
       </ul>
       <h2>What the page may ask of the shell</h2>

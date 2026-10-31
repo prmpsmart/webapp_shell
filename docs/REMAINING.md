@@ -10,7 +10,6 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 
 Decided 31 October 2026: the page talks only to the shell and the backend never does, as in Pixeval. `shell/pixeval_shell` is stable (it runs in Pixeval on Windows and macOS, and Linux is expected to pass), so the library ports it and does not re-prove it.
 
-- [ ] **A ready WebSocket guard for Starlette** (the contract has `is_valid_connection` and the close code only).
 - [ ] **The whole library typed, no guessing** (pyright strict is clean on `src/`; the untyped OS surfaces are marked in three files). Remaining: run pyright over `tests/` and `examples/` too, and add it to CI.
 - [ ] **The public API listing** (`docs/API.md`, generated from the code): every class, function and signature, so the owner decides what stays public; then mark the rest private.
 - [ ] **The words the shell shows** (splash, give-up message, check messages) available to the frontend for translation, and a document in `docs/` about it.

@@ -6,8 +6,9 @@ from pathlib import Path
 import pytest
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse, PlainTextResponse
-from starlette.routing import Route
+from starlette.routing import Route, WebSocketRoute
 from starlette.testclient import TestClient
+from starlette.websockets import WebSocketDisconnect
 
 from webapp_shell.backend_process import BackendProcess
 from webapp_shell.contract import (
@@ -16,7 +17,7 @@ from webapp_shell.contract import (
     add_launch_arguments,
     read_launch_arguments,
 )
-from webapp_shell.contract.guard import GuardResponses, TokenGuard
+from webapp_shell.contract.guard import GuardResponses, TokenGuard, WebSocketGuard
 
 TOKEN = "test-token"
 
@@ -169,3 +170,37 @@ def test_the_core_of_the_contract_needs_no_web_framework():
     code = "import sys, webapp_shell.contract; sys.exit(1 if 'starlette' in sys.modules else 0)"
     source = str(Path(__file__).resolve().parents[1] / "src")
     assert subprocess.run([sys.executable, "-c", code], env={"PYTHONPATH": source}).returncode == 0
+
+
+class TestWebSocketGuard:
+    @pytest.fixture
+    def client(self, wire):
+        guard = WebSocketGuard(TokenValidator(TOKEN, wire), wire)
+
+        async def events(socket):
+            if not await guard.accept(socket):
+                return
+            await socket.send_json({"hello": True})
+            await socket.close()
+
+        return TestClient(Starlette(routes=[WebSocketRoute("/api/events", events)]))
+
+    def test_a_socket_with_the_token_in_the_header_the_cookie_or_the_query_is_accepted(self, client, wire):
+        for kind in ("header", "cookie", "query"):
+            headers = {wire.token_header: TOKEN} if kind == "header" else {}
+            if kind == "cookie":
+                client.cookies.set(wire.token_cookie, TOKEN)
+            path = f"/api/events?{wire.token_query}={TOKEN}" if kind == "query" else "/api/events"
+            with client.websocket_connect(path, headers=headers) as socket:
+                assert socket.receive_json() == {"hello": True}
+            client.cookies.clear()
+
+    def test_a_socket_without_the_token_is_closed_with_the_unauthorized_code(self, client, wire):
+        with pytest.raises(WebSocketDisconnect) as refused, client.websocket_connect("/api/events"):
+            pass
+        assert refused.value.code == wire.ws_close_unauthorized == 4401
+
+    def test_a_socket_from_another_page_is_refused_even_with_the_token(self, client, wire):
+        headers = {wire.token_header: TOKEN, "origin": "http://evil.example"}
+        with pytest.raises(WebSocketDisconnect), client.websocket_connect("/api/events", headers=headers):
+            pass

@@ -1,6 +1,16 @@
-"""HTTP access control for a Starlette or FastAPI backend: the launch token, from a header or a cookie.
+"""Access control for a Starlette or FastAPI backend: the launch token, from a header or a cookie.
 
     app.add_middleware(TokenGuard, validator=TokenValidator(token, wire), wire=wire)
+
+and for a WebSocket route, which middleware does not cover:
+
+    guard = WebSocketGuard(validator, wire)
+
+    @app.websocket("/api/events")
+    async def events(socket: WebSocket):
+        if not await guard.accept(socket):
+            return
+        ...
 
 Needs `starlette` (`pip install "webapp-shell[backend]"`).
 """
@@ -11,6 +21,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse, Response
 from starlette.types import ASGIApp
+from starlette.websockets import WebSocket
 
 from ..protocol import WireProtocol
 from .tokens import OriginPolicy, TokenValidator
@@ -67,3 +78,27 @@ class TokenGuard(BaseHTTPMiddleware):
         if in_api and path != wire.health_path and not self._validator.is_valid(self._bearer(request)):
             return JSONResponse(self._responses.unauthorized, status_code=401)
         return await call_next(request)
+
+
+class WebSocketGuard:
+    """The same rules for a socket as `TokenGuard` has for a request: the token (header, cookie or query string) and
+    the origin. A refused socket is closed with `wire.ws_close_unauthorized` before it is accepted."""
+
+    def __init__(self, validator: TokenValidator, wire: WireProtocol, origins: OriginPolicy | None = None):
+        self._validator = validator
+        self._wire = wire
+        self._origins = origins or OriginPolicy()
+
+    def allows(self, socket: WebSocket) -> bool:
+        from_own_page = self._origins.allows(socket.headers.get(ORIGIN_HEADER), socket.headers.get(HOST_HEADER))
+        return from_own_page and self._validator.is_valid_connection(
+            socket.headers, socket.cookies, socket.query_params
+        )
+
+    async def accept(self, socket: WebSocket) -> bool:
+        """Accepts the socket and returns True, or closes it and returns False: the route then just returns."""
+        if not self.allows(socket):
+            await socket.close(code=self._wire.ws_close_unauthorized)
+            return False
+        await socket.accept()
+        return True
