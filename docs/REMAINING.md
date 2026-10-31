@@ -1,21 +1,15 @@
 # Remaining
 
-Everything still open before `webapp-shell` is published on PyPI as a library people can use, in one place. `[ ]` is open; `[x]` is done. Last updated 31 October 2026. Parts 1, 2 and 3 and the minimal example are done (see `HANDOVER.md`).
+Everything still open before `webapp-shell` is published on PyPI as a library people can use, in one place. Only what is still open: finished items are deleted (what was done is in `HANDOVER.md` and the git log). Last updated 31 October 2026.
 
 At a glance: **A** decisions for the owner, **B** code still to write, **C** the example site and the documentation, **D** checks that have never been run, **E** publishing, **F** Pixeval adopts it (not needed to publish), **G** small items.
 
 ## A. Decisions for the owner
 
-- [x] **Licence: MIT** (decided 31 October 2026). `LICENSE` added (copyright holder “Miracle Apata (prmpsmart)”; prmpsmart is the handle, used for the GitHub account, the repository and the docs address); `pyproject.toml` has `license = "MIT"`.
-- [x] **Page-side bridge: one `.js` file** (decided 31 October 2026), shipped inside the Python wheel (an ES module with a `.d.ts` beside it); the frontend copies it. No npm package. Light, and the stack stays Python-only; npm can be added later without breaking anyone.
-- [x] **Python 3.13 and above** (decided 31 October 2026). `requires-python = ">=3.13"`, ruff targets 3.13, CI tests 3.13 (and later ones as they appear).
 - [ ] **Version policy (still open).** `0.x` while the API may still change; when it becomes `1.0`.
-- [x] **Documentation address: `prmpsmart.github.io/webapp_shell`** (decided 31 October 2026). Put it in the project URLs and the README.
 
 ## B. Code still to write
 
-- [x] **Part 3: the native-method registry** (31 October 2026). `NativeFunction` / `NativeRegistry`: a project adds its own functions through `ShellConfig.native_functions`; one envelope (`{ok, value}` or `{ok, error}`) on both shells; the standard set is written once against a `NativeWindow`; 125 tests.
-- [x] **The page-side bridge client** (31 October 2026): `bridge/webapp-shell-bridge.js` + `.d.ts` inside the wheel, `python -m webapp_shell bridge --out DIR` copies them. Tested under Node (both shells' objects, late announcement, plain-browser fallbacks, errors); a test keeps its method list equal to `NativeMethod`. Not yet tried in a real page.
 - [ ] **Confirm the rule “the page talks to the shell, the backend never does”.** It is how Pixeval works and how the guides will explain a feature (page → shell → path → page → backend); the owner confirms it holds for the library too, or asks for a backend-to-shell channel.
 - [ ] **WebSocket path.** The library has `is_valid_connection` and the close code only; decide whether to offer a ready `WebSocket` guard for Starlette too.
 - [ ] **Own-function arguments and results are JSON only** (numbers, text, lists, objects, null). Say so in the guide; decide whether to offer typed argument parsing for project functions.
@@ -24,32 +18,27 @@ At a glance: **A** decisions for the owner, **B** code still to write, **C** the
 
 ## C. The example site and the documentation
 
-- [x] **`examples/minimal/`: a minimal app** (31 October 2026): a Starlette backend that follows the contract, a one-page frontend with the bridge copied in, a fifteen-line launcher, a README. Run for real by `tests/test_example_minimal.py`.
-- [ ] **The documentation website** as the example (started 31 October 2026, `examples/site`, React + Vite + TypeScript: frame with sidebar, search, light and dark; Overview, Getting started, Choose a file; still to add: Save as, Reveal, Open a link, Zoom, Boot colours, token and health, a backend job, the backend stopping): a modern docs look (sidebar, search, code samples, light and dark), opened by the library's own shell, a live demonstration of every capability: choose a file or folder, save as, reveal, open a link, zoom, boot colours, token handover and health, a running backend job, the backend stopping.
-- [x] **Three snippets per feature page** (the `CodeTabs` component; the shown code is the real file, imported raw, so it cannot drift; done for Choose a file): frontend, backend and shell (`12-webapp-shell.md` of the Pixeval repository, section 8).
-- [x] **Committed `dist` of that frontend** (`.gitignore` now keeps `examples/*/frontend/dist`; a test fails if the build is stale), so running the example needs only Python.
+- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started and the six native-function pages). Still to add, each with a live demonstration and the three snippets (frontend, backend, shell): token handover and health, a running backend job, the backend stopping, a native function of your own, choose a folder.
 - [ ] **Guides** (pages of the site, also Markdown in `docs/`): getting started; the contract (exact names, token handover, health, shutdown); configuring identity and backend; native functions; freezing with PyInstaller (the freeze profile in Pixeval is the model); troubleshooting (Windows icon format, the pywebview API walk, console noise, WebView2).
 - [ ] **Reference** generated from the config classes and docstrings.
 - [ ] **A page for frontend developers:** what the page may assume (the token cookie, the bridge object) and nothing else.
 - [ ] **A security page:** loopback only, the per-launch token, the origin check, what the page may and may not ask the shell.
-- [ ] **Tests that run the examples and the code samples**, so the docs cannot go stale.
+- [ ] **Tests for the samples of the pages still to come** (the existing pages are covered: backend, launcher sample, build freshness, headless Qt run).
 - [ ] **Static copy on GitHub Pages**, demo buttons marked "run this in the shell".
 
 ## D. Checks that have never been run
 
-- [x] **Qt, headless, on macOS** (31 October 2026): `app.py qt --smoke` runs the real QWebChannel glue with the bridge file; the page found `acmeNative` (now a test).
 - [ ] **A real window from the library on macOS:** pywebview (`python examples/minimal/app.py --smoke`, which shows a window for a few seconds) and a visible Qt window; click “Choose a file” and check the path reaches the backend.
 - [ ] **Windows:** pywebview with WebView2 and `pythonnet`; the `.ico` window icon; the native bridge without the `[pywebview] Error while processing window.native` flood. Never run, in Pixeval either.
 - [ ] **Linux** (GTK/Qt WebKit): at least a smoke run.
 - [ ] **Starlette versions:** tested on 0.46.2 only; try the minimum in `pyproject.toml` (0.40) and a current one. Same for pywebview (`>=6.2`).
 - [ ] **A frozen program** (PyInstaller) built with the library: the `--run-backend` path, the library check, the data files.
-- [x] The wheel builds with `hatchling` and holds the bridge files, `__main__` and the licence (checked once, 31 October 2026); repeat in CI.
 - [ ] **Clean install of the built wheel** into an empty environment; run the example.
 
 ## E. Publishing
 
 - [ ] **Recheck the name.** `webapp-shell` and `webapp_shell` were free on PyPI on 28 October 2026.
-- [ ] **Metadata in `pyproject.toml`:** URLs (repository, documentation `prmpsmart.github.io/webapp_shell`, issues), classifiers (Python 3.13, OS, framework), keywords, a final description. (`license` is done.)
+- [ ] **Metadata in `pyproject.toml`:** URLs (repository, documentation `prmpsmart.github.io/webapp_shell`, issues), classifiers (Python 3.13, OS, framework), keywords, a final description. 
 - [ ] **`CHANGELOG.md`, `README.md` polish** (badges only when the CI exists), a short `CONTRIBUTING.md` if wanted.
 - [ ] **GitHub repository** `prmpsmart/webapp_shell` (public), push the first commit.
 - [ ] **CI (GitHub Actions):** `pytest` and `ruff` on Linux, macOS and Windows for each push, on Python 3.13.

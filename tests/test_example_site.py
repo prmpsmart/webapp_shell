@@ -55,6 +55,14 @@ def test_the_backend_is_started_by_the_shell_and_follows_the_contract(site_path,
         )
         assert httpx.get(f"{process.base_url}/api/describe").status_code == 401  # no token
 
+        target = tmp_path / "saved.txt"
+        saved = httpx.post(f"{process.base_url}/api/save", json={"path": str(target), "text": "abc"}, headers=headers)
+        assert saved.json() == {"bytes": 3}
+        assert target.read_text() == "abc"
+        missing = tmp_path / "no-such-folder" / "x.txt"
+        refused = httpx.post(f"{process.base_url}/api/save", json={"path": str(missing), "text": ""}, headers=headers)
+        assert refused.status_code == 400
+
 
 def test_the_getting_started_launcher_sample_builds_a_config(tmp_path):
     page = (SITE / "src" / "pages" / "GettingStarted.tsx").read_text()
@@ -70,7 +78,9 @@ def test_the_committed_build_contains_the_code_it_shows():
     """A stale `dist` would show code that is no longer the code: rebuild with `npm run build` in examples/site."""
     bundle = "".join(path.read_text() for path in (SITE / "frontend" / "dist" / "assets").glob("*.js"))
     assert "async def describe" in bundle
-    assert "chooseAndDescribe" in bundle
+    for shown in ("chooseAndDescribe", "chooseAndSave", "chooseAndReveal", "openInBrowser", "applyZoom"):
+        assert shown in bundle, shown
+    assert "async def save_note" in bundle
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")

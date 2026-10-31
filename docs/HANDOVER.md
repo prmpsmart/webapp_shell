@@ -104,3 +104,4 @@ React + Vite + TypeScript, built into `examples/site/frontend/dist` (committed).
 - `docs_backend/` is the site's backend (contract plus one route per demonstration); `app.py` is the launcher. Slug `docs`, so the native global is `docsNative`.
 - `src/bridge/` is a copy made with `python -m webapp_shell bridge --out examples/site/src/bridge` (prettier ignores it; a test keeps it equal to the package's file).
 - `tests/test_example_site.py`: backend through `BackendProcess`, the Getting started sample executed, the committed build checked against the code it shows, and a headless Qt run of the whole site.
+- A native-function page is `FeaturePage` + `Demo` + a `src/demos/<feature>.ts` file (the code shown, also the code run) + `codeFor(...)` for the three tabs; a feature with no backend part passes `null` and the tab says so. `docs_backend/save_note.py` is the second backend sample.

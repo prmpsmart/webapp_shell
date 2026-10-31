@@ -14,6 +14,7 @@ from webapp_shell.contract.guard import TokenGuard
 from webapp_shell.protocol import WireProtocol
 
 from .describe import describe
+from .save_note import save_note
 
 WIRE = WireProtocol.for_slug("docs")
 VERSION = "0.1.0"
@@ -32,6 +33,7 @@ def create_app(token: str, frontend: Path | None) -> Starlette:
         Route(WIRE.health_path, health),
         Route(WIRE.version_path, version),
         Route(f"{WIRE.api_prefix}/describe", describe),
+        Route(f"{WIRE.api_prefix}/save", save_note, methods=["POST"]),
     ]
     if frontend is not None:
         routes.append(Mount("/", StaticFiles(directory=frontend, html=True)))

@@ -1,12 +1,22 @@
 import type { ComponentType } from 'react'
+import { BootColorsPage } from './pages/BootColors'
 import { ChooseFile } from './pages/ChooseFile'
 import { GettingStarted } from './pages/GettingStarted'
+import { OpenLink } from './pages/OpenLink'
 import { Overview } from './pages/Overview'
+import { Reveal } from './pages/Reveal'
+import { SaveAs } from './pages/SaveAs'
+import { Zoom } from './pages/Zoom'
 
 export enum PageId {
   Overview = 'overview',
   GettingStarted = 'getting-started',
   ChooseFile = 'choose-file',
+  SaveAs = 'save-as',
+  Reveal = 'reveal',
+  OpenLink = 'open-link',
+  Zoom = 'zoom',
+  BootColors = 'boot-colors',
 }
 
 export enum Section {
@@ -43,6 +53,41 @@ export const PAGES: Page[] = [
     section: Section.NativeFunctions,
     keywords: 'pickFile dialog path open',
     component: ChooseFile,
+  },
+  {
+    id: PageId.SaveAs,
+    title: 'Save as',
+    section: Section.NativeFunctions,
+    keywords: 'saveAs write file dialog',
+    component: SaveAs,
+  },
+  {
+    id: PageId.Reveal,
+    title: 'Show in the file manager',
+    section: Section.NativeFunctions,
+    keywords: 'reveal finder explorer folder',
+    component: Reveal,
+  },
+  {
+    id: PageId.OpenLink,
+    title: 'Open a link',
+    section: Section.NativeFunctions,
+    keywords: 'openUrl browser url',
+    component: OpenLink,
+  },
+  {
+    id: PageId.Zoom,
+    title: 'Zoom',
+    section: Section.NativeFunctions,
+    keywords: 'setZoom scale size',
+    component: Zoom,
+  },
+  {
+    id: PageId.BootColors,
+    title: 'Boot colours',
+    section: Section.NativeFunctions,
+    keywords: 'setBootColors splash theme flash',
+    component: BootColorsPage,
   },
 ]
 
