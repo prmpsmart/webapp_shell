@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "webapp-shell"
+version = "0.1.0"
+description = "A desktop window for a web app made of a Python backend and a compiled frontend."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "PRMPSmart", email = "prmpsmart@gmail.com" }]
+dependencies = ["httpx>=0.28", "pywebview>=6.2"]
+
+[project.optional-dependencies]
+qt = ["PySide6>=6.9"]
+backend = ["starlette>=0.40"]
+dev = ["pytest>=8", "ruff>=0.5", "PySide6>=6.9", "starlette>=0.40"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/webapp_shell"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src", "tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "RUF001", "RUF002", "RUF003"]
