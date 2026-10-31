@@ -8,6 +8,7 @@ python app.py --smoke    # headless self-check: load the page, print what it ren
 from pathlib import Path
 
 from docs_backend.spec import BACKEND, HERE
+from native_functions import NATIVE_FUNCTIONS
 from webapp_shell import AppIdentity, BootColors, ShellConfig, run
 
 config = ShellConfig(
@@ -19,6 +20,7 @@ config = ShellConfig(
     ),
     backend=BACKEND,
     source_root=HERE,  # holds frontend/dist, the compiled frontend
+    native_functions=NATIVE_FUNCTIONS,
 )
 
 if __name__ == "__main__":

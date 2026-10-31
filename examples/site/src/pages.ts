@@ -1,11 +1,15 @@
 import type { ComponentType } from 'react'
+import { BackendStopping } from './pages/BackendStopping'
 import { BootColorsPage } from './pages/BootColors'
+import { ChooseFolder } from './pages/ChooseFolder'
 import { ChooseFile } from './pages/ChooseFile'
 import { GettingStarted } from './pages/GettingStarted'
 import { OpenLink } from './pages/OpenLink'
+import { OwnFunction } from './pages/OwnFunction'
 import { Overview } from './pages/Overview'
 import { Reveal } from './pages/Reveal'
 import { SaveAs } from './pages/SaveAs'
+import { TokenAndHealth } from './pages/TokenAndHealth'
 import { Zoom } from './pages/Zoom'
 
 export enum PageId {
@@ -17,11 +21,16 @@ export enum PageId {
   OpenLink = 'open-link',
   Zoom = 'zoom',
   BootColors = 'boot-colors',
+  ChooseFolder = 'choose-folder',
+  OwnFunction = 'own-function',
+  TokenAndHealth = 'token-and-health',
+  BackendStopping = 'backend-stopping',
 }
 
 export enum Section {
   Introduction = 'Introduction',
   NativeFunctions = 'Native functions',
+  Contract = 'Shell and backend',
 }
 
 export interface Page {
@@ -88,6 +97,34 @@ export const PAGES: Page[] = [
     section: Section.NativeFunctions,
     keywords: 'setBootColors splash theme flash',
     component: BootColorsPage,
+  },
+  {
+    id: PageId.ChooseFolder,
+    title: 'Choose a folder',
+    section: Section.NativeFunctions,
+    keywords: 'pickFolder directory dialog path',
+    component: ChooseFolder,
+  },
+  {
+    id: PageId.OwnFunction,
+    title: 'Your own function',
+    section: Section.NativeFunctions,
+    keywords: 'NativeFunction call register custom python',
+    component: OwnFunction,
+  },
+  {
+    id: PageId.TokenAndHealth,
+    title: 'Token and health',
+    section: Section.Contract,
+    keywords: 'token cookie header 401 health security launch',
+    component: TokenAndHealth,
+  },
+  {
+    id: PageId.BackendStopping,
+    title: 'When the backend stops',
+    section: Section.Contract,
+    keywords: 'watchdog restart crash exit',
+    component: BackendStopping,
   },
 ]
 

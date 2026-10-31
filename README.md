@@ -5,7 +5,7 @@ in one config object; the library starts the backend, waits until it is healthy,
 (pywebview, or Qt on request) and gives the page a small set of native functions (file and folder dialogs, reveal in the
 file manager, open a link, zoom).
 
-> Status: 0.1.0 in preparation, not published. See `docs/HANDOVER.md`.
+> Status: 0.1 in preparation, not published. See `docs/HANDOVER.md`.
 >
 > By Miracle Apata ([@prmpsmart](https://github.com/prmpsmart)). MIT licence.
 

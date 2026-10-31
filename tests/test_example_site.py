@@ -60,6 +60,13 @@ def test_the_backend_is_started_by_the_shell_and_follows_the_contract(site_path,
         assert saved.json() == {"bytes": 3}
         assert target.read_text() == "abc"
         missing = tmp_path / "no-such-folder" / "x.txt"
+        folder = httpx.get(f"{process.base_url}/api/folder", params={"path": str(tmp_path)}, headers=headers).json()
+        assert folder["count"] >= 2 and "note.txt" in folder["first"]
+        assert (
+            httpx.get(f"{process.base_url}/api/folder", params={"path": str(file)}, headers=headers).status_code == 404
+        )
+        assert httpx.get(f"{process.base_url}/api/version").status_code == 401
+        assert httpx.get(f"{process.base_url}/api/health").json() == {"status": "ok"}  # open to anyone
         refused = httpx.post(f"{process.base_url}/api/save", json={"path": str(missing), "text": ""}, headers=headers)
         assert refused.status_code == 400
 
@@ -80,7 +87,9 @@ def test_the_committed_build_contains_the_code_it_shows():
     assert "async def describe" in bundle
     for shown in ("chooseAndDescribe", "chooseAndSave", "chooseAndReveal", "openInBrowser", "applyZoom"):
         assert shown in bundle, shown
-    assert "async def save_note" in bundle
+    for shown in ("async def save_note", "async def list_folder", "async def crash", "class BackendWatchdog"):
+        assert shown in bundle, shown
+    assert "whereAmI" in bundle
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")
@@ -94,3 +103,17 @@ def test_the_site_renders_in_the_qt_shell(tmp_path):
     assert done.returncode == 0, done.stderr
     assert '"native":"docsNative"' in done.stdout
     assert '"title":"Overview · webapp_shell"' in done.stdout
+
+
+def test_the_sites_own_native_functions_run_through_the_registry(site_path):
+    from native_functions import NATIVE_FUNCTIONS
+    from webapp_shell.native.registry import NativeRegistry
+
+    registry = NativeRegistry(NATIVE_FUNCTIONS)
+    assert registry.call(None, "greet", ["Ada"]) == {
+        "ok": True,
+        "value": "Hello, Ada. This text was made by the shell.",
+    }
+    place = registry.call(None, "whereAmI", [])["value"]
+    assert set(place) == {"system", "release", "python"}
+    assert registry.call(None, "greet", [])["ok"] is False  # missing argument: refused in plain words

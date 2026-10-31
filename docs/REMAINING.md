@@ -2,11 +2,9 @@
 
 Everything still open before `webapp-shell` is published on PyPI as a library people can use, in one place. Only what is still open: finished items are deleted (what was done is in `HANDOVER.md` and the git log). Last updated 31 October 2026.
 
-At a glance: **A** decisions for the owner, **B** code still to write, **C** the example site and the documentation, **D** checks that have never been run, **E** publishing, **F** Pixeval adopts it (not needed to publish), **G** small items.
+Versions are `x.y` (decided 31 October 2026): 0.1, 0.2 … 1.0, each release counts as stable; no patch number.
 
-## A. Decisions for the owner
-
-- [ ] **Version policy (still open).** `0.x` while the API may still change; when it becomes `1.0`.
+At a glance: **B** code still to write, **C** the example site and the documentation, **D** checks that have never been run, **E** publishing, **F** Pixeval adopts it (not needed to publish), **G** small items.
 
 ## B. Code still to write
 
@@ -18,7 +16,7 @@ At a glance: **A** decisions for the owner, **B** code still to write, **C** the
 
 ## C. The example site and the documentation
 
-- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started and the six native-function pages). Still to add, each with a live demonstration and the three snippets (frontend, backend, shell): token handover and health, a running backend job, the backend stopping, a native function of your own, choose a folder.
+- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started, nine native-function pages, token and health, when the backend stops). Still to add, each with a live demonstration and the three snippets (frontend, backend, shell): a running backend job (a long task with progress), the shell's own splash and first-run check.
 - [ ] **Guides** (pages of the site, also Markdown in `docs/`): getting started; the contract (exact names, token handover, health, shutdown); configuring identity and backend; native functions; freezing with PyInstaller (the freeze profile in Pixeval is the model); troubleshooting (Windows icon format, the pywebview API walk, console noise, WebView2).
 - [ ] **Reference** generated from the config classes and docstrings.
 - [ ] **A page for frontend developers:** what the page may assume (the token cookie, the bridge object) and nothing else.
@@ -46,7 +44,7 @@ At a glance: **A** decisions for the owner, **B** code still to write, **C** the
 - [ ] **Accounts:** PyPI and TestPyPI, with two-factor authentication.
 - [ ] **Trusted publishing:** a GitHub Actions workflow that publishes on a version tag, so no token is stored.
 - [ ] **Dry run on TestPyPI**, install from it, run the example.
-- [ ] **Release `0.1.0`:** tag `v0.1.0`, publish to PyPI, check `pip install webapp-shell` in a clean environment.
+- [ ] **Release `0.1`:** tag `v0.1`, publish to PyPI, check `pip install webapp-shell` in a clean environment.
 
 ## F. Pixeval adopts it (after publishing, or from the sibling folder before)
 
