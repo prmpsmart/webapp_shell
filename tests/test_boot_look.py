@@ -8,7 +8,7 @@ from webapp_shell.splash import HERO_GRADIENT, SplashPage
 
 from .conftest import COLORS
 
-GOOD = {"base": "#0b1630", "glowA": "#2d4bd8", "glowB": "#7a5af8"}
+GOOD = BootColors("#0b1630", "#2d4bd8", "#7a5af8")
 
 
 def test_splash_paints_the_gradient_and_no_dark_variant():
@@ -24,31 +24,26 @@ def test_splash_and_error_pages_carry_the_program_name():
 
 def test_preferences_round_trip_and_survive_a_restart(tmp_path, config):
     path = tmp_path / "shell.json"
-    colors = BootColors.from_payload(GOOD)
-    assert ShellPreferences(path).save_boot_colors(colors)
-    assert ShellPreferences(path).boot_colors == colors
-    assert Settings.of(config, ShellPreferences(path)).boot_colors == colors
+    assert ShellPreferences(path).save_boot_colors(GOOD)
+    assert ShellPreferences(path).boot_colors == GOOD
+    assert Settings.of(config, ShellPreferences(path)).boot_colors == GOOD
 
 
 def test_preferences_reject_anything_that_is_not_a_hex_colour(tmp_path):
     path = tmp_path / "shell.json"
     prefs = ShellPreferences(path)
     for bad in (
-        {**GOOD, "base": "red"},
-        {**GOOD, "glowA": "#12345"},
-        {**GOOD, "glowB": "#11111;} body{display:none"},
-        {"base": "#000000"},
-        "not json",
-        ["#000000"],
-        None,
+        ("red", "#000000", "#000000"),
+        ("#000000", "#12345", "#000000"),
+        ("#000000", "#000000", "#11111;} body{display:none"),
+        ("#000000", None, "#000000"),
+        ("#000000", 5, "#000000"),
+        (["#000000"], "#000000", "#000000"),
     ):
-        assert BootColors.from_payload(bad) is None
+        assert BootColors.from_values(*bad) is None
+    assert BootColors.from_values("#0B1630", "#2d4bd8", "#7a5af8") == BootColors("#0B1630", "#2d4bd8", "#7a5af8")
     assert not prefs.save_boot_colors(BootColors("x", "y", "z"))
     assert not path.exists()  # nothing was written
-
-
-def test_the_payload_may_arrive_as_json_text_like_the_qt_bridge_sends_it():
-    assert BootColors.from_payload(json.dumps(GOOD)) == BootColors("#0b1630", "#2d4bd8", "#7a5af8")
 
 
 def test_a_damaged_preferences_file_is_ignored(tmp_path):
@@ -63,7 +58,7 @@ def test_a_damaged_preferences_file_is_ignored(tmp_path):
 
 def test_in_memory_preferences_never_touch_disk():
     prefs = ShellPreferences(None)
-    assert prefs.save_boot_colors(BootColors.from_payload(GOOD))
+    assert prefs.save_boot_colors(GOOD)
     assert prefs.boot_colors is not None
 
 

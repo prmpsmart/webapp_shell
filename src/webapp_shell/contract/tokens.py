@@ -21,7 +21,9 @@ class TokenValidator:
         # Compared as bytes: `compare_digest` refuses text with non-ASCII characters, which a caller controls.
         return bool(candidate) and hmac.compare_digest(candidate.encode(), self._token.encode())
 
-    def is_valid_connection(self, headers: Mapping, cookies: Mapping, query: Mapping) -> bool:
+    def is_valid_connection(
+        self, headers: Mapping[str, str], cookies: Mapping[str, str], query: Mapping[str, str]
+    ) -> bool:
         """A socket can carry the token in a header (tools), the cookie (the browser) or the query string."""
         wire = self._wire
         candidate = headers.get(wire.token_header) or cookies.get(wire.token_cookie) or query.get(wire.token_query)

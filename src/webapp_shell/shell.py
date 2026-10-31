@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 
 from .backend_process import BackendError, BackendProcess
+from .json_types import JsonObject
 from .native.registry import NativeRegistry
 from .native.standard import standard_functions
 from .preferences import ShellPreferences
@@ -33,7 +34,7 @@ class Shell(ABC):
         self.preferences = preferences or ShellPreferences(None)
         self.backend = backend
         self.smoke = smoke
-        self.backend_version: dict = {}
+        self.backend_version: JsonObject = {}
         self.failed = False
         self.splash = SplashPage(settings.identity.name, settings.icon_png, settings.boot_colors)
         self.watchdog = BackendWatchdog(backend, self.report_error, settings.identity.name)
@@ -95,7 +96,7 @@ class Shell(ABC):
     # --- what a concrete shell provides ---------------------------------------------------------
 
     @abstractmethod
-    def event_loop(self, boot) -> None:
+    def event_loop(self, boot: Callable[[], None]) -> None:
         """Show the window with the loading splash, call `boot()` on a worker thread, block until closed."""
 
     @abstractmethod

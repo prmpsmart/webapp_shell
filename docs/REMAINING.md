@@ -8,10 +8,12 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 
 ## B. Code still to write
 
-- [ ] **Confirm the rule “the page talks to the shell, the backend never does”.** It is how Pixeval works and how the guides will explain a feature (page → shell → path → page → backend); the owner confirms it holds for the library too, or asks for a backend-to-shell channel.
-- [ ] **WebSocket path.** The library has `is_valid_connection` and the close code only; decide whether to offer a ready `WebSocket` guard for Starlette too.
-- [ ] **Own-function arguments and results are JSON only** (numbers, text, lists, objects, null). Say so in the guide; decide whether to offer typed argument parsing for project functions.
-- [ ] **Public API review.** Decide what `webapp_shell.__init__` exports for good; mark everything else private. Add type hints check (`py.typed`).
+Decided 31 October 2026: the page talks only to the shell and the backend never does, as in Pixeval. `shell/pixeval_shell` is stable (it runs in Pixeval on Windows and macOS, and Linux is expected to pass), so the library ports it and does not re-prove it.
+
+- [ ] **A ready WebSocket guard for Starlette** (the contract has `is_valid_connection` and the close code only).
+- [ ] **The whole library typed, no guessing** (pyright strict is clean on `src/`; the untyped OS surfaces are marked in three files). Remaining: run pyright over `tests/` and `examples/` too, and add it to CI.
+- [ ] **The public API listing** (`docs/API.md`, generated from the code): every class, function and signature, so the owner decides what stays public; then mark the rest private.
+- [ ] **The words the shell shows** (splash, give-up message, check messages) available to the frontend for translation, and a document in `docs/` about it.
 - [ ] **Errors a stranger will meet**, in plain words: missing `frontend/dist`, a backend that never answers its health path, a missing WebView2 on Windows (the first-run check reports it).
 
 ## C. The example site and the documentation
@@ -24,9 +26,6 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 
 ## D. Checks that have never been run
 
-- [ ] **A real window from the library on macOS:** pywebview (`python examples/minimal/app.py --smoke`, which shows a window for a few seconds) and a visible Qt window; click “Choose a file” and check the path reaches the backend.
-- [ ] **Windows:** pywebview with WebView2 and `pythonnet`; the `.ico` window icon; the native bridge without the `[pywebview] Error while processing window.native` flood. Never run, in Pixeval either.
-- [ ] **Linux** (GTK/Qt WebKit): at least a smoke run.
 - [ ] **Starlette versions:** tested on 0.46.2 only; try the minimum in `pyproject.toml` (0.40) and a current one. Same for pywebview (`>=6.2`).
 - [ ] **A frozen program** (PyInstaller) built with the library: the `--run-backend` path, the library check, the data files.
 - [ ] **Clean install of the built wheel** into an empty environment; run the example.
@@ -55,5 +54,4 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 ## G. Small items
 
 - [ ] The splash page text is English only ("Close {name} and open it again" is the watchdog message); decide whether the library offers a way to translate its few messages.
-- [ ] Zoom for Windows and Linux is unit-tested, never run.
 - [ ] `HANDOVER.md` and this file overlap; once the library is published, shrink the handover to history and keep this file as the list.

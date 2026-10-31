@@ -1,6 +1,9 @@
 """The native bridge of the pywebview shell. pywebview turns every public callable of this object into
 `window.pywebview.api.<name>()`; the registered native functions are attached by name, each answering in the envelope."""
 
+from collections.abc import Callable
+
+from ..json_types import JsonObject, JsonValue
 from .registry import NativeRegistry
 from .window import NativeContext
 
@@ -14,8 +17,8 @@ class WebviewBridge:
         for name in registry.names:
             setattr(self, name, self._function(name))
 
-    def _function(self, name: str):
-        def call(*arguments):
+    def _function(self, name: str) -> Callable[..., JsonObject]:
+        def call(*arguments: JsonValue) -> JsonObject:
             return self._registry.call(self._context, name, list(arguments))
 
         call.__name__ = name

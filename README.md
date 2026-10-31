@@ -44,12 +44,17 @@ Native functions: the standard set (file and folder dialogs, save as, reveal, op
 there; a project adds its own and the page calls them by name.
 
 ```python
-from webapp_shell import NativeFunction
+from dataclasses import dataclass
+from webapp_shell import JsonValue, NativeContext, NativeFunction
 
-def greet(context, who):          # context.window, context.preferences, context.actions
-    return f"hello {who}"
+@dataclass(frozen=True)
+class Greeting:                   # the page's arguments, in order; each is type-checked before your code runs
+    who: str
 
-config = ShellConfig(..., native_functions=(NativeFunction("greet", greet),))
+def greet(context: NativeContext, arguments: Greeting) -> JsonValue:  # context.window, .preferences, .actions
+    return f"hello {arguments.who}"
+
+config = ShellConfig(..., native_functions=(NativeFunction("greet", Greeting, greet),))
 ```
 
 ```js

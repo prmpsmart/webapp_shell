@@ -1,59 +1,89 @@
 """The native functions every project gets. Written once, against `NativeContext`; the page sees them under the names
-of `NativeMethod`."""
+of `NativeMethod`. Each declares its arguments as a dataclass."""
+
+from dataclasses import dataclass, field
 
 from ..enums import NativeMethod
 from ..preferences import BootColors
 from .filters import FileFilter
-from .registry import NativeFunction
+from .registry import NativeCallable, NativeFunction
 from .window import NativeContext
 from .zoom import clamp
 
 
-def _text(value: object) -> str:
-    return value if isinstance(value, str) else ""
+@dataclass(frozen=True)
+class PickFolderArguments:
+    start: str = ""
 
 
-def pick_folder(context: NativeContext, start: object = "") -> str | None:
-    return context.window.pick_folder(_text(start))
+@dataclass(frozen=True)
+class PickFileArguments:
+    filters: list[FileFilter] = field(default_factory=list[FileFilter])
+    start: str = ""
 
 
-def pick_file(context: NativeContext, filters: object = None, start: object = "") -> str | None:
-    parsed = FileFilter.parse_all(filters if isinstance(filters, list) else None)
-    return context.window.pick_file(parsed, _text(start))
+@dataclass(frozen=True)
+class SaveAsArguments:
+    name: str = ""
+    start: str = ""
 
 
-def save_as(context: NativeContext, name: object = "", start: object = "") -> str | None:
-    return context.window.save_as(_text(name), _text(start))
+@dataclass(frozen=True)
+class RevealArguments:
+    path: str
 
 
-def reveal(context: NativeContext, path: object) -> bool:
-    return context.actions.reveal(_text(path))
+@dataclass(frozen=True)
+class OpenUrlArguments:
+    url: str
 
 
-def open_url(context: NativeContext, url: object) -> bool:
-    return context.actions.open_url(_text(url))
+@dataclass(frozen=True)
+class BootColorsArguments:
+    colors: BootColors
 
 
-def set_boot_colors(context: NativeContext, colors: object) -> bool:
-    parsed = BootColors.from_payload(colors)
-    return parsed is not None and context.preferences.save_boot_colors(parsed)
+@dataclass(frozen=True)
+class ZoomArguments:
+    factor: float
 
 
-def set_zoom(context: NativeContext, factor: object) -> bool:
-    zoom = clamp(factor)
-    return zoom is not None and context.window.set_zoom(zoom)
+def pick_folder(context: NativeContext, arguments: PickFolderArguments) -> str | None:
+    return context.window.pick_folder(arguments.start)
 
 
-STANDARD = {
-    NativeMethod.PICK_FOLDER: pick_folder,
-    NativeMethod.PICK_FILE: pick_file,
-    NativeMethod.SAVE_AS: save_as,
-    NativeMethod.REVEAL: reveal,
-    NativeMethod.OPEN_URL: open_url,
-    NativeMethod.SET_BOOT_COLORS: set_boot_colors,
-    NativeMethod.SET_ZOOM: set_zoom,
-}
+def pick_file(context: NativeContext, arguments: PickFileArguments) -> str | None:
+    usable = [item for item in arguments.filters if item.is_usable]
+    return context.window.pick_file(usable, arguments.start)
 
 
-def standard_functions() -> tuple[NativeFunction, ...]:
-    return tuple(NativeFunction(method.value, handler) for method, handler in STANDARD.items())
+def save_as(context: NativeContext, arguments: SaveAsArguments) -> str | None:
+    return context.window.save_as(arguments.name, arguments.start)
+
+
+def reveal(context: NativeContext, arguments: RevealArguments) -> bool:
+    return context.actions.reveal(arguments.path)
+
+
+def open_url(context: NativeContext, arguments: OpenUrlArguments) -> bool:
+    return context.actions.open_url(arguments.url)
+
+
+def set_boot_colors(context: NativeContext, arguments: BootColorsArguments) -> bool:
+    return context.preferences.save_boot_colors(arguments.colors)
+
+
+def set_zoom(context: NativeContext, arguments: ZoomArguments) -> bool:
+    return context.window.set_zoom(clamp(arguments.factor))
+
+
+def standard_functions() -> tuple[NativeCallable, ...]:
+    return (
+        NativeFunction(NativeMethod.PICK_FOLDER.value, PickFolderArguments, pick_folder),
+        NativeFunction(NativeMethod.PICK_FILE.value, PickFileArguments, pick_file),
+        NativeFunction(NativeMethod.SAVE_AS.value, SaveAsArguments, save_as),
+        NativeFunction(NativeMethod.REVEAL.value, RevealArguments, reveal),
+        NativeFunction(NativeMethod.OPEN_URL.value, OpenUrlArguments, open_url),
+        NativeFunction(NativeMethod.SET_BOOT_COLORS.value, BootColorsArguments, set_boot_colors),
+        NativeFunction(NativeMethod.SET_ZOOM.value, ZoomArguments, set_zoom),
+    )

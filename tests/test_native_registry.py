@@ -2,11 +2,12 @@
 transports (Qt's single `call` slot and pywebview's attached functions)."""
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
 
-from webapp_shell import NativeError, NativeFunction
+from webapp_shell import NativeError, NativeFunction, NoArguments
 from webapp_shell.enums import NativeMethod
 from webapp_shell.native.filters import FileFilter
 from webapp_shell.native.os_actions import OsActions
@@ -15,6 +16,11 @@ from webapp_shell.native.standard import standard_functions
 from webapp_shell.native.webview_bridge import WebviewBridge
 from webapp_shell.native.window import NativeContext, NativeWindow
 from webapp_shell.preferences import ShellPreferences
+
+
+@dataclass(frozen=True)
+class Greeting:
+    who: str
 
 
 class FakeWindow(NativeWindow):
@@ -78,8 +84,9 @@ def test_a_cancelled_dialog_is_none(registry, context, window):
 
 
 def test_filters_from_the_page_are_parsed_before_they_reach_the_window(registry, context, window):
-    registry.call(context, "pickFile", [[{"name": "Excel", "extensions": ["*.xlsx"]}, {"name": ""}], "/s"])
-    assert window.calls == [("pick_file", [FileFilter("Excel", ("xlsx",))], "/s")]
+    sent = [{"name": "Excel", "extensions": ["*.xlsx"]}, {"name": "", "extensions": []}]
+    assert registry.call(context, "pickFile", [sent, "/s"])["ok"] is True
+    assert window.calls == [("pick_file", [FileFilter("Excel", ("*.xlsx",))], "/s")]  # the unusable one is dropped
 
 
 def test_save_as_proposes_the_name(registry, context, window):
@@ -87,10 +94,11 @@ def test_save_as_proposes_the_name(registry, context, window):
     assert window.calls == [("save_as", "report.xlsx", "")]
 
 
-def test_what_the_page_sends_is_never_trusted_for_its_type(registry, context, window):
-    registry.call(context, "pickFolder", [{"not": "text"}])
-    registry.call(context, "saveAs", [None, 5])
-    assert window.calls == [("pick_folder", ""), ("save_as", "", "")]
+def test_what_the_page_sends_must_fit_the_declared_types(registry, context, window):
+    assert registry.call(context, "pickFolder", [{"not": "text"}]) == {"ok": False, "error": '"start" must be text'}
+    assert registry.call(context, "saveAs", [None, 5])["ok"] is False
+    assert registry.call(context, "pickFile", [[{"name": "x"}]])["error"] == '"filters[0]" needs the field "extensions"'
+    assert window.calls == []  # a refused call never reaches the window
 
 
 def test_reveal_and_open_url_go_through_the_os_actions(registry, context):
@@ -102,7 +110,8 @@ def test_reveal_and_open_url_go_through_the_os_actions(registry, context):
 def test_zoom_is_limited_and_only_numbers_count(registry, context, window):
     assert registry.call(context, "setZoom", [99])["value"] is True
     assert window.calls == [("set_zoom", 3.0)]
-    assert registry.call(context, "setZoom", ["1.2"])["value"] is False
+    assert registry.call(context, "setZoom", ["1.2"]) == {"ok": False, "error": '"factor" must be a number'}
+    assert registry.call(context, "setZoom", [True])["ok"] is False  # true is not 1
 
 
 def test_boot_colours_are_remembered_only_when_valid(registry, context):
@@ -110,36 +119,38 @@ def test_boot_colours_are_remembered_only_when_valid(registry, context):
     assert registry.call(context, "setBootColors", [good])["value"] is True
     assert context.preferences.boot_colors.base == "#102030"
     assert registry.call(context, "setBootColors", [{**good, "base": "red"}])["value"] is False
+    assert registry.call(context, "setBootColors", [{"base": "#000000"}])["error"] == '"colors" needs the field "glowA"'
+    assert registry.call(context, "setBootColors", [{**good, "extra": 1}])["error"] == '"colors" has no field "extra"'
 
 
 def test_an_unknown_name_or_bad_arguments_are_refused_in_plain_words(registry, context):
     assert registry.call(context, "formatDisk", []) == {"ok": False, "error": "unknown native function"}
-    assert registry.call(context, 5, []) == {"ok": False, "error": "unknown native function"}
     assert registry.call(context, "pickFolder", "not a list")["error"] == "the arguments must be a list"
-    assert registry.call(context, "reveal", [])["error"] == "the arguments do not fit this function"
+    assert registry.call(context, "reveal", [])["error"] == 'missing argument "path"'
+    assert registry.call(context, "reveal", ["a", "b"])["error"] == "too many arguments"
 
 
 def test_a_project_adds_its_own_function(context):
-    def greet(_context, who):
-        return f"hello {who}"
+    def greet(_context: NativeContext, arguments: Greeting) -> str:
+        return f"hello {arguments.who}"
 
-    registry = NativeRegistry((*standard_functions(), NativeFunction("greet", greet)))
+    registry = NativeRegistry((*standard_functions(), NativeFunction("greet", Greeting, greet)))
     assert registry.call(context, "greet", ["Ada"]) == {"ok": True, "value": "hello Ada"}
 
 
 def test_a_handler_may_refuse_in_words_the_page_shows(context):
-    def refuse(_context):
+    def refuse(_context: NativeContext, _arguments: NoArguments) -> None:
         raise NativeError("not allowed here")
 
-    registry = NativeRegistry((NativeFunction("refuse", refuse),))
+    registry = NativeRegistry((NativeFunction("refuse", NoArguments, refuse),))
     assert registry.call(context, "refuse", []) == {"ok": False, "error": "not allowed here"}
 
 
 def test_a_crash_in_a_handler_does_not_leak_its_details(context, caplog):
-    def crash(_context):
+    def crash(_context: NativeContext, _arguments: NoArguments) -> None:
         raise RuntimeError("secret internals")
 
-    registry = NativeRegistry((NativeFunction("crash", crash),))
+    registry = NativeRegistry((NativeFunction("crash", NoArguments, crash),))
     answer = registry.call(context, "crash", [])
     assert answer == {"ok": False, "error": "the native function failed"}
     assert "secret internals" not in json.dumps(answer) and "secret internals" in caplog.text
@@ -148,12 +159,14 @@ def test_a_crash_in_a_handler_does_not_leak_its_details(context, caplog):
 @pytest.mark.parametrize("name", ["", "Pick", "pick_file", "1pick", "pick file"])
 def test_a_function_name_must_be_camel_case(name):
     with pytest.raises(ValueError):
-        NativeFunction(name, lambda _context: None)
+        NativeFunction(name, NoArguments, lambda _context, _arguments: None)
 
 
 def test_two_functions_cannot_share_a_name():
     with pytest.raises(ValueError):
-        NativeRegistry((*standard_functions(), NativeFunction("pickFile", lambda _context: None)))
+        NativeRegistry(
+            (*standard_functions(), NativeFunction("pickFile", NoArguments, lambda _context, _arguments: None))
+        )
 
 
 def test_the_projects_functions_reach_the_shell_registry(config):
@@ -169,7 +182,7 @@ def test_the_projects_functions_reach_the_shell_registry(config):
         def set_title(self, title): ...
         def quit(self): ...
 
-    own = NativeFunction("greet", lambda _context: "hi")
+    own = NativeFunction("greet", NoArguments, lambda _context, _arguments: "hi")
     shell = Dummy(Settings.of(replace(config, native_functions=(own,))), backend=None)
     assert shell.native.names == [*(m.value for m in NativeMethod), "greet"]
 
@@ -211,7 +224,9 @@ class TestWebviewBridge:
         assert set(walk(WebviewBridge(registry, context))) == set(registry.names)
 
     def test_a_project_function_is_exposed_too(self, context):
-        registry = NativeRegistry((*standard_functions(), NativeFunction("greet", lambda _context: "hi")))
+        registry = NativeRegistry(
+            (*standard_functions(), NativeFunction("greet", NoArguments, lambda _context, _arguments: "hi"))
+        )
         assert WebviewBridge(registry, context).greet() == {"ok": True, "value": "hi"}
 
 

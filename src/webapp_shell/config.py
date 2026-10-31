@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .backend import BackendSpec
 from .identity import AppIdentity
-from .native.registry import NativeFunction
+from .native.registry import NativeCallable
 
 
 @dataclass(frozen=True)
@@ -17,5 +17,5 @@ class ShellConfig:
     startup_timeout: float = 20.0  # seconds to wait for the backend to answer its health path
     # The splash stays at least this long, so the opening always reads as a deliberate, steady start.
     splash_seconds: float = 0.0
-    native_functions: tuple[NativeFunction, ...] = ()  # the project's own, added to the standard ones
+    native_functions: tuple[NativeCallable, ...] = ()  # the project's own, added to the standard ones
     required_libraries: tuple[str, ...] = ()  # imported by `--check-libraries` on a frozen program

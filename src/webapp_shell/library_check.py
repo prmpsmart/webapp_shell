@@ -19,7 +19,7 @@ class LibraryCheck:
         self._libraries = libraries
 
     def problems(self) -> list[LibraryProblem]:
-        found = []
+        found: list[LibraryProblem] = []
         for name in self._libraries:
             try:
                 importlib.import_module(name)

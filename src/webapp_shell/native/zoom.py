@@ -2,28 +2,34 @@
 applies it to its web view. Qt has `setZoomFactor`; pywebview has no zoom call, so each system's own web view is
 reached here, one small class per system."""
 
+# pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownLambdaType=false
+# pyright: reportUnknownArgumentType=false, reportMissingTypeStubs=false, reportMissingImports=false
+# pyright: reportAttributeAccessIssue=false
+# The lines below talk to AppKit (PyObjC), .NET and GTK, which publish no type stubs. Their inside is untyped by
+# necessity; the signatures of this module are typed.
+
 import sys
 import threading
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+
+import webview
 
 MIN_ZOOM = 0.5
 MAX_ZOOM = 3.0
 MAIN_THREAD_WAIT = 2.0  # seconds to wait for the system's UI thread
 
 
-def clamp(value: object) -> float | None:
-    """A usable zoom factor, or None when the value is not a number."""
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        return None
-    return min(MAX_ZOOM, max(MIN_ZOOM, float(value)))
+def clamp(value: float) -> float:
+    """A usable zoom factor: the value, kept between the smallest and the largest the shells allow."""
+    return min(MAX_ZOOM, max(MIN_ZOOM, value))
 
 
 class ZoomSurface(ABC):
     """How to set the page zoom of a pywebview window on one system. `apply` says whether it was applied."""
 
     @abstractmethod
-    def apply(self, window, factor: float) -> bool: ...
+    def apply(self, window: webview.Window, factor: float) -> bool: ...
 
 
 class MacZoom(ZoomSurface):
@@ -33,7 +39,7 @@ class MacZoom(ZoomSurface):
     def __init__(self, on_main: Callable[[Callable[[], None]], None] | None = None):
         self._on_main = on_main or self._app_helper
 
-    def apply(self, window, factor: float) -> bool:
+    def apply(self, window: webview.Window, factor: float) -> bool:
         done = threading.Event()
         result: list[bool] = []
 
@@ -62,7 +68,7 @@ class MacZoom(ZoomSurface):
 class WindowsZoom(ZoomSurface):
     """WebView2's `ZoomFactor`. The browser's own Ctrl +/- are off in a released program, the page's shortcuts do it."""
 
-    def apply(self, window, factor: float) -> bool:
+    def apply(self, window: webview.Window, factor: float) -> bool:
         try:
             from System import Func, Type
 
@@ -80,7 +86,7 @@ class WindowsZoom(ZoomSurface):
 class GtkZoom(ZoomSurface):
     """WebKitGTK's `set_zoom_level`, called on the GTK main loop."""
 
-    def apply(self, window, factor: float) -> bool:
+    def apply(self, window: webview.Window, factor: float) -> bool:
         try:
             from gi.repository import GLib
 
@@ -101,5 +107,5 @@ class WebviewZoom:
             return MacZoom()
         return WindowsZoom() if sys.platform == "win32" else GtkZoom()
 
-    def apply(self, window, factor: float) -> bool:
-        return window is not None and self._surface.apply(window, factor)
+    def apply(self, window: webview.Window, factor: float) -> bool:
+        return self._surface.apply(window, factor)

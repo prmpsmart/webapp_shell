@@ -64,8 +64,10 @@ export function OwnFunction() {
     >
       <p>
         A handler receives the context first (the window, the shell's preferences, the OS actions) and then
-        the arguments the page sent. It returns anything JSON can carry. To refuse a call in words the page
-        may show, raise <code>NativeError</code>; any other error becomes a plain “the native function
+        its arguments, a dataclass you declare: the page's values fill its fields in order and each is checked
+        against the field's type before your code runs (a number where text is expected is refused; nothing is
+        converted). It returns anything JSON can carry (<code>JsonValue</code>). To refuse a call in words the
+        page may show, raise <code>NativeError</code>; any other error becomes a plain “the native function
         failed”, and the details stay in the shell's log.
       </p>
       <p>

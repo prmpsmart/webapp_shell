@@ -10,6 +10,7 @@ import json
 from PySide6.QtCore import QFile, QIODevice, QObject, Slot
 
 from ..identity import AppIdentity
+from ..json_types import JsonValue
 from .registry import NativeRegistry
 from .window import NativeContext
 
@@ -42,7 +43,7 @@ class QtBridge(QObject):
     @Slot(str, str, result=str)
     def call(self, name: str, arguments_json: str) -> str:
         try:
-            arguments = json.loads(arguments_json or "[]")
+            arguments: JsonValue = json.loads(arguments_json or "[]")
         except ValueError:
             arguments = None
         return json.dumps(self._registry.call(self._context, name, arguments))
@@ -53,7 +54,7 @@ class QtBridge(QObject):
         resource = QFile(":/qtwebchannel/qwebchannel.js")
         if not resource.open(QIODevice.OpenModeFlag.ReadOnly):
             raise RuntimeError("qwebchannel.js is not available in this Qt installation")
-        return bytes(resource.readAll()).decode("utf-8") + _GLUE_JS % {
+        return bytes(resource.readAll().data()).decode("utf-8") + _GLUE_JS % {
             "object": CHANNEL_OBJECT,
             "names": json.dumps(registry.names),
             "global": identity.native_global,

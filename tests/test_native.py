@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import ClassVar
 
 from webapp_shell.native.filters import FileFilter
 from webapp_shell.native.os_actions import OsActions
@@ -9,20 +8,13 @@ from .conftest import COLORS
 
 
 class TestFileFilter:
-    RAW: ClassVar[list[dict]] = [
-        {"name": "Excel", "extensions": ["xlsx", "*.xls"]},
-        {"name": "", "extensions": ["x"]},
-        {"name": "None"},
-    ]
-
-    def test_parse_drops_incomplete_entries_and_strips_wildcards(self):
-        assert FileFilter.parse_all(self.RAW) == [FileFilter("Excel", ("xlsx", "xls"))]
-
-    def test_parse_handles_nothing(self):
-        assert FileFilter.parse_all(None) == []
+    def test_a_filter_needs_a_name_and_an_extension(self):
+        assert FileFilter("Excel", ("xlsx",)).is_usable
+        assert not FileFilter("", ("x",)).is_usable
+        assert not FileFilter("None", ()).is_usable
 
     def test_toolkit_formats(self):
-        f = FileFilter("Excel", ("xlsx", "xls"))
+        f = FileFilter("Excel", ("xlsx", "*.xls"))  # an extension may carry its wildcard
         assert f.to_qt() == "Excel (*.xlsx *.xls)"
         assert f.to_webview() == "Excel (*.xlsx;*.xls)"
 
@@ -73,9 +65,8 @@ def test_shell_kinds_match_the_registry():
     assert set(registry.kinds()) == set(ShellKind)
 
 
-def test_zoom_factors_are_limited_and_only_numbers_count():
+def test_zoom_factors_are_limited():
     from webapp_shell.native.zoom import MAX_ZOOM, MIN_ZOOM, clamp
 
     assert clamp(1.25) == 1.25 and clamp(1) == 1.0
     assert clamp(99) == MAX_ZOOM and clamp(0.01) == MIN_ZOOM
-    assert clamp("1.2") is None and clamp(None) is None and clamp(True) is None

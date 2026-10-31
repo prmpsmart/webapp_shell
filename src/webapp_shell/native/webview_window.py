@@ -1,5 +1,7 @@
 """`NativeWindow` for the pywebview shell. The window is attached after pywebview creates it."""
 
+from collections.abc import Sequence
+
 import webview
 
 from .filters import FileFilter
@@ -16,30 +18,36 @@ class WebviewWindow(NativeWindow):
     def bind(self, window: webview.Window) -> None:
         self._window = window
 
+    @property
+    def window(self) -> webview.Window:
+        if self._window is None:
+            raise RuntimeError("the window is not attached yet")
+        return self._window
+
     def pick_folder(self, start: str) -> str | None:
         location = StartLocation.of(start)
-        return self._first(self._window.create_file_dialog(webview.FileDialog.FOLDER, directory=location.directory))
+        return self._first(self.window.create_file_dialog(webview.FileDialog.FOLDER, directory=location.directory))
 
     def pick_file(self, filters: list[FileFilter], start: str) -> str | None:
         location = StartLocation.of(start)
         types = tuple(f.to_webview() for f in filters)
         return self._first(
-            self._window.create_file_dialog(webview.FileDialog.OPEN, directory=location.directory, file_types=types)
+            self.window.create_file_dialog(webview.FileDialog.OPEN, directory=location.directory, file_types=types)
         )
 
     def save_as(self, name: str, start: str) -> str | None:
         location = StartLocation.of(start)
         return self._first(
-            self._window.create_file_dialog(
+            self.window.create_file_dialog(
                 webview.FileDialog.SAVE, directory=location.directory, save_filename=location.filename or name
             )
         )
 
     def set_zoom(self, factor: float) -> bool:
-        return self._zoom.apply(self._window, factor)
+        return self._zoom.apply(self.window, factor)
 
     @staticmethod
-    def _first(result) -> str | None:
+    def _first(result: Sequence[str] | str | None) -> str | None:
         """pywebview returns a path, a list of paths, or nothing when cancelled."""
         if not result:
             return None

@@ -3,6 +3,7 @@
 import os
 import sys
 import threading
+from collections.abc import Callable
 
 from PySide6.QtCore import QObject, QTimer, QUrl, Signal
 from PySide6.QtGui import QColor, QIcon
@@ -11,11 +12,14 @@ from PySide6.QtWebEngineCore import QWebEngineScript
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication
 
+from .backend_process import BackendProcess
 from .enums import ShellKind
 from .native.os_actions import OsActions
 from .native.qt_bridge import CHANNEL_OBJECT, QtBridge
 from .native.qt_window import QtWindow
 from .native.window import NativeContext
+from .preferences import ShellPreferences
+from .settings import Settings
 from .shell import Shell
 from .smoke import SETTLE_SECONDS, page_probe_js
 
@@ -32,8 +36,14 @@ class _Dispatcher(QObject):
 class QtShell(Shell):
     name = ShellKind.QT
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        settings: Settings,
+        backend: BackendProcess,
+        preferences: ShellPreferences | None = None,
+        smoke: bool = False,
+    ):
+        super().__init__(settings, backend, preferences, smoke)
         if self.smoke:
             os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
         self._app = QApplication(sys.argv)
@@ -44,16 +54,16 @@ class QtShell(Shell):
         self._wire_dispatcher()
         self._install_native_bridge()
 
-    def event_loop(self, boot) -> None:
+    def event_loop(self, boot: Callable[[], None]) -> None:
         self._view.setWindowTitle(self.settings.identity.name)
         self._view.resize(*self.settings.window_size)
         self._view.setHtml(self.splash.loading())
         if self.smoke:  # headless: never show the window (offscreen GPU rendering is unreliable)
             self._view.loadFinished.connect(self._on_load_finished)
-            QTimer.singleShot(30_000, self._app.quit)
+            QTimer.singleShot(30_000, self._app.quit)  # pyright: ignore[reportUnknownMemberType]  # PySide6 leaves the callable open
         else:
             self._view.show()
-        QTimer.singleShot(0, lambda: threading.Thread(target=boot, daemon=True).start())
+        QTimer.singleShot(0, lambda: threading.Thread(target=boot, daemon=True).start())  # pyright: ignore[reportUnknownMemberType]  # PySide6 leaves the callable open
         self._app.exec()
 
     def navigate(self, url: str) -> None:
@@ -82,10 +92,13 @@ class QtShell(Shell):
 
     def _wire_dispatcher(self) -> None:
         d = self._dispatcher
-        d.navigate.connect(lambda url: self._view.load(QUrl(url)))
+        d.navigate.connect(self._load)
         d.show_page.connect(self._view.setHtml)
         d.set_title.connect(self._view.setWindowTitle)
         d.quit.connect(self._app.quit)
+
+    def _load(self, url: str) -> None:
+        self._view.load(QUrl(url))
 
     def _install_native_bridge(self) -> None:
         self._channel = QWebChannel(self._view.page())
@@ -97,14 +110,16 @@ class QtShell(Shell):
         script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentReady)
         script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld)
         script.setSourceCode(QtBridge.page_script_source(self.settings.identity, self.native))
-        self._view.page().scripts().insert(script)
+        self._view.page().scripts().insert(script)  # pyright: ignore[reportUnknownMemberType]  # overload with an open list type
 
     def _on_load_finished(self, _ok: bool) -> None:
         if self._view.url().scheme() == "http":  # the frontend, not the splash
-            QTimer.singleShot(int(SETTLE_SECONDS * 1000), self._probe)
+            QTimer.singleShot(int(SETTLE_SECONDS * 1000), self._probe)  # pyright: ignore[reportUnknownMemberType]  # PySide6 leaves the callable open
 
     def _probe(self) -> None:
-        self._view.page().runJavaScript(page_probe_js(self.settings.identity.native_global), self._on_probe)
+        self._view.page().runJavaScript(  # pyright: ignore[reportUnknownMemberType]  # the result callback type is open
+            page_probe_js(self.settings.identity.native_global), self._on_probe
+        )
 
     def _on_probe(self, page: str) -> None:
         self.finish_smoke(page)

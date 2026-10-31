@@ -9,6 +9,7 @@ import time
 import httpx
 
 from .backend import CliFlag
+from .json_types import JsonObject, JsonValue
 from .settings import Settings
 
 
@@ -22,7 +23,7 @@ class BackendProcess:
         self._wire = settings.config.backend.wire
         self._keeps_preferences = keeps_preferences
         self._flags = flags  # the project's switches that are on
-        self._proc: subprocess.Popen | None = None
+        self._proc: subprocess.Popen[bytes] | None = None
         self._port = 0
         self.token = secrets.token_urlsafe(24)
 
@@ -39,7 +40,7 @@ class BackendProcess:
         self.start()
         return self
 
-    def __exit__(self, *_exc) -> None:
+    def __exit__(self, *_exc: object) -> None:
         self.stop()
 
     def start(self) -> None:
@@ -70,13 +71,16 @@ class BackendProcess:
             self._proc.kill()
         self._proc = None
 
-    def version(self) -> dict:
+    def version(self) -> JsonObject:
         """What the backend says about itself, or nothing when the project has no version path."""
         if self._wire.version_path is None:
             return {}
         response = httpx.get(f"{self.base_url}{self._wire.version_path}", headers={self._wire.token_header: self.token})
         response.raise_for_status()
-        return response.json()
+        body: JsonValue = response.json()
+        if not isinstance(body, dict):
+            raise BackendError("the version path did not answer with an object")
+        return body
 
     def _command(self) -> list[str]:
         backend = self._settings.config.backend
@@ -98,7 +102,7 @@ class BackendProcess:
             return []
         return [argument, str(self._settings.identity.app_preferences_path)]
 
-    def _environment(self) -> dict:
+    def _environment(self) -> dict[str, str]:
         paths = [str(p) for p in self._settings.package_dirs] + [os.environ.get("PYTHONPATH", "")]
         return {**os.environ, "PYTHONPATH": os.pathsep.join(paths), self._wire.token_env: self.token}
 
@@ -109,7 +113,7 @@ class BackendProcess:
 
     def _wait_until_healthy(self) -> None:
         deadline = time.time() + self._settings.startup_timeout
-        while time.time() < deadline and self._proc.poll() is None:
+        while time.time() < deadline and self._proc is not None and self._proc.poll() is None:
             try:
                 if httpx.get(f"{self.base_url}{self._wire.health_path}", timeout=1).status_code == 200:
                     return

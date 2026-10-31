@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+from .json_types import JsonObject
+
 
 def page_probe_js(native_global: str) -> str:
     """What to ask the loaded page: its title, whether the app rendered, and which native bridge it can see."""
@@ -21,7 +23,7 @@ SETTLE_SECONDS = 2.5
 @dataclass(frozen=True)
 class SmokeReport:
     shell: str
-    backend: dict
+    backend: JsonObject
     page: str
 
     def __str__(self) -> str:

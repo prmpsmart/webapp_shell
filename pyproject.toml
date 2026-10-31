@@ -34,3 +34,10 @@ src = ["src", "tests", "examples/minimal", "examples/site"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 ignore = ["E501", "RUF001", "RUF002", "RUF003"]
+
+[tool.pyright]
+include = ["src"]
+typeCheckingMode = "strict"
+pythonVersion = "3.13"
+venvPath = "/Users/miracle-apata/Documents/Workspace/Aescolan"
+venv = "aescolan"

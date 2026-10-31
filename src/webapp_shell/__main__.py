@@ -13,7 +13,7 @@ def copy_bridge(out: Path) -> list[Path]:
     """Copies the bridge files into `out` (created if needed) and returns where they went."""
     out.mkdir(parents=True, exist_ok=True)
     source = resources.files("webapp_shell") / "bridge"
-    copied = []
+    copied: list[Path] = []
     for name in BRIDGE_FILES:
         target = out / name
         with resources.as_file(source / name) as path:

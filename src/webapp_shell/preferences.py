@@ -7,6 +7,8 @@ import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from .json_types import JsonObject, JsonValue
+
 _HEX_COLOUR = re.compile(r"#[0-9a-fA-F]{6}")
 
 
@@ -24,16 +26,11 @@ class BootColors:
     glow_b: str
 
     @classmethod
-    def from_payload(cls, payload: object) -> "BootColors | None":
-        """From what a page sent (a dict with camelCase keys, or its JSON text). None when it is not valid."""
-        if isinstance(payload, str):
-            try:
-                payload = json.loads(payload)
-            except ValueError:
-                return None
-        if not isinstance(payload, dict):
+    def from_values(cls, base: JsonValue, glow_a: JsonValue, glow_b: JsonValue) -> "BootColors | None":
+        """From three stored values. None when one is not text or the three are not `#rrggbb` colours."""
+        if not (isinstance(base, str) and isinstance(glow_a, str) and isinstance(glow_b, str)):
             return None
-        colors = cls(payload.get("base"), payload.get("glowA"), payload.get("glowB"))
+        colors = cls(base, glow_a, glow_b)
         return colors if colors.is_valid else None
 
     @property
@@ -51,15 +48,14 @@ class ShellPreferences:
 
     def __init__(self, path: Path | None):
         self._path = path
-        self._values: dict = self._read()
+        self._values: JsonObject = self._read()
 
     @property
     def boot_colors(self) -> BootColors | None:
         stored = self._values.get(self.BOOT_KEY)
         if not isinstance(stored, dict):
             return None
-        colors = BootColors(stored.get("base"), stored.get("glow_a"), stored.get("glow_b"))
-        return colors if colors.is_valid else None
+        return BootColors.from_values(stored.get("base"), stored.get("glow_a"), stored.get("glow_b"))
 
     def save_boot_colors(self, colors: BootColors) -> bool:
         if not colors.is_valid:
@@ -69,11 +65,11 @@ class ShellPreferences:
         return True
 
     # storage -----------------------------------------------------------------------------------
-    def _read(self) -> dict:
+    def _read(self) -> JsonObject:
         if self._path is None or not self._path.is_file():
             return {}
         try:
-            data = json.loads(self._path.read_text(encoding="utf-8"))
+            data: JsonValue = json.loads(self._path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             return {}
         return data if isinstance(data, dict) else {}

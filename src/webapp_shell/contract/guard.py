@@ -7,9 +7,10 @@ Needs `starlette` (`pip install "webapp-shell[backend]"`).
 
 from dataclasses import dataclass, field
 
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
-from starlette.responses import JSONResponse, RedirectResponse
+from starlette.responses import JSONResponse, RedirectResponse, Response
+from starlette.types import ASGIApp
 
 from ..protocol import WireProtocol
 from .tokens import OriginPolicy, TokenValidator
@@ -22,8 +23,8 @@ HOST_HEADER = "host"
 class GuardResponses:
     """What a refused request gets back. A project with its own error format replaces them."""
 
-    unauthorized: dict = field(default_factory=lambda: {"code": "UNAUTHORIZED"})
-    foreign_origin: dict = field(default_factory=lambda: {"code": "FOREIGN_ORIGIN"})
+    unauthorized: dict[str, str] = field(default_factory=lambda: {"code": "UNAUTHORIZED"})
+    foreign_origin: dict[str, str] = field(default_factory=lambda: {"code": "FOREIGN_ORIGIN"})
 
 
 class TokenGuard(BaseHTTPMiddleware):
@@ -35,7 +36,7 @@ class TokenGuard(BaseHTTPMiddleware):
 
     def __init__(
         self,
-        app,
+        app: ASGIApp,
         validator: TokenValidator,
         wire: WireProtocol,
         origins: OriginPolicy | None = None,
@@ -55,7 +56,7 @@ class TokenGuard(BaseHTTPMiddleware):
         response.set_cookie(self._wire.token_cookie, self._validator.token, httponly=True, samesite="strict")
         return response
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         wire = self._wire
         path = request.url.path
         in_api = path.startswith(wire.api_prefix)

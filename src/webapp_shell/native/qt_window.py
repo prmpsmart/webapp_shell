@@ -2,7 +2,8 @@
 
 from pathlib import Path
 
-from PySide6.QtWidgets import QFileDialog, QWidget
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWidgets import QFileDialog
 
 from .filters import FileFilter
 from .start_location import StartLocation
@@ -10,7 +11,7 @@ from .window import NativeWindow
 
 
 class QtWindow(NativeWindow):
-    def __init__(self, view: QWidget):
+    def __init__(self, view: QWebEngineView):
         self._view = view
 
     def pick_folder(self, start: str) -> str | None:

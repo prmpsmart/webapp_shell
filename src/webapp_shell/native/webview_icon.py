@@ -2,6 +2,12 @@
 shows a generic icon until it is set here. A packaged program has its icon from the bundle; this serves a run
 from the source tree. Always safe: a platform it does not know is left alone."""
 
+# pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownLambdaType=false
+# pyright: reportUnknownArgumentType=false, reportMissingTypeStubs=false, reportMissingImports=false
+# pyright: reportAttributeAccessIssue=false
+# The lines below talk to AppKit (PyObjC), .NET and GTK, which publish no type stubs. Their inside is untyped by
+# necessity; the signatures of this module are typed.
+
 import sys
 from pathlib import Path
 

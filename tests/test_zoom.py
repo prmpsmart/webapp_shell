@@ -22,9 +22,8 @@ def immediately(call):
     call()
 
 
-def test_clamp_keeps_a_factor_in_range_and_refuses_what_is_not_a_number():
+def test_clamp_keeps_a_factor_in_range():
     assert clamp(10) == MAX_ZOOM and clamp(0.1) == MIN_ZOOM and clamp(1.25) == 1.25
-    assert clamp("1.5") is None and clamp(True) is None and clamp(None) is None
 
 
 def test_the_mac_zoom_sets_the_page_zoom_of_the_content_view():
@@ -42,13 +41,12 @@ def test_a_main_thread_that_never_answers_is_reported(monkeypatch):
     assert MacZoom(on_main=lambda call: None).apply(FakeWindow(FakeWebView()), 1.5) is False
 
 
-def test_a_missing_window_is_not_a_crash():
+def test_the_zoom_goes_to_the_surface_of_this_system():
     class Always(ZoomSurface):
         def apply(self, window, factor):
             return True
 
-    assert WebviewZoom(Always()).apply(None, 1.5) is False
-    assert WebviewZoom(Always()).apply(object(), 1.5) is True
+    assert WebviewZoom(Always()).apply(object(), 1.5) is True  # type: ignore[arg-type]
 
 
 def test_the_dock_icon_is_only_for_macos_and_needs_a_file(monkeypatch, tmp_path):

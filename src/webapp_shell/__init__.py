@@ -10,7 +10,9 @@ from .cli import run
 from .config import ShellConfig
 from .enums import NativeMethod, ShellKind
 from .identity import AppIdentity
-from .native.registry import NativeError, NativeFunction
+from .json_types import JsonObject, JsonValue
+from .native.errors import NativeError
+from .native.registry import NativeCallable, NativeFunction, NoArguments
 from .native.window import NativeContext, NativeWindow
 from .preferences import BootColors
 from .protocol import WireProtocol
@@ -20,11 +22,15 @@ __all__ = [
     "BackendSpec",
     "BootColors",
     "CliFlag",
+    "JsonObject",
+    "JsonValue",
+    "NativeCallable",
     "NativeContext",
     "NativeError",
     "NativeFunction",
     "NativeMethod",
     "NativeWindow",
+    "NoArguments",
     "ShellConfig",
     "ShellKind",
     "WireProtocol",
