@@ -9,11 +9,16 @@ export const NO_BACKEND_CODE = `# Nothing to write here.
 # talks to the shell, and it is not involved at all.
 `
 
-export function codeFor(
-  frontend: [string, string],
-  backend: [string, string] | null,
-  shell: [string, string],
-): Snippet[] {
+/** The shell tab of a feature the shell takes no part in. */
+export const NO_SHELL_CODE = `# Nothing to write here.
+#
+# The shell only starts and watches the backend. This feature runs between
+# the page and the backend.
+`
+
+type Source = [file: string, code: string]
+
+export function codeFor(frontend: Source, backend: Source | null, shell: Source | null): Snippet[] {
   return [
     { layer: Layer.Frontend, file: frontend[0], code: frontend[1] },
     {
@@ -21,7 +26,7 @@ export function codeFor(
       file: backend ? backend[0] : '(none)',
       code: backend ? backend[1] : NO_BACKEND_CODE,
     },
-    { layer: Layer.Shell, file: shell[0], code: shell[1] },
+    { layer: Layer.Shell, file: shell ? shell[0] : '(none)', code: shell ? shell[1] : NO_SHELL_CODE },
   ]
 }
 

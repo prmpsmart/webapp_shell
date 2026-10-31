@@ -1,14 +1,17 @@
 import type { ComponentType } from 'react'
+import { BackendJob } from './pages/BackendJob'
 import { BackendStopping } from './pages/BackendStopping'
 import { BootColorsPage } from './pages/BootColors'
 import { ChooseFolder } from './pages/ChooseFolder'
 import { ChooseFile } from './pages/ChooseFile'
+import { ForFrontend } from './pages/ForFrontend'
 import { GettingStarted } from './pages/GettingStarted'
 import { OpenLink } from './pages/OpenLink'
 import { OwnFunction } from './pages/OwnFunction'
 import { Overview } from './pages/Overview'
 import { Reveal } from './pages/Reveal'
 import { SaveAs } from './pages/SaveAs'
+import { Security } from './pages/Security'
 import { TokenAndHealth } from './pages/TokenAndHealth'
 import { Zoom } from './pages/Zoom'
 
@@ -25,12 +28,16 @@ export enum PageId {
   OwnFunction = 'own-function',
   TokenAndHealth = 'token-and-health',
   BackendStopping = 'backend-stopping',
+  BackendJob = 'backend-job',
+  ForFrontend = 'for-frontend',
+  Security = 'security',
 }
 
 export enum Section {
   Introduction = 'Introduction',
   NativeFunctions = 'Native functions',
   Contract = 'Shell and backend',
+  Guides = 'Guides',
 }
 
 export interface Page {
@@ -125,6 +132,27 @@ export const PAGES: Page[] = [
     section: Section.Contract,
     keywords: 'watchdog restart crash exit',
     component: BackendStopping,
+  },
+  {
+    id: PageId.BackendJob,
+    title: 'A long task',
+    section: Section.Contract,
+    keywords: 'job progress background polling websocket',
+    component: BackendJob,
+  },
+  {
+    id: PageId.ForFrontend,
+    title: 'For frontend developers',
+    section: Section.Guides,
+    keywords: 'react vue assume cookie origin bridge browser fallback',
+    component: ForFrontend,
+  },
+  {
+    id: PageId.Security,
+    title: 'Security',
+    section: Section.Guides,
+    keywords: 'token loopback origin cookie validate trust threat',
+    component: Security,
   },
 ]
 

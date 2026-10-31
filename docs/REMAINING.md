@@ -16,11 +16,9 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 
 ## C. The example site and the documentation
 
-- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started, nine native-function pages, token and health, when the backend stops). Still to add, each with a live demonstration and the three snippets (frontend, backend, shell): a running backend job (a long task with progress), the shell's own splash and first-run check.
-- [ ] **Guides** (pages of the site, also Markdown in `docs/`): getting started; the contract (exact names, token handover, health, shutdown); configuring identity and backend; native functions; freezing with PyInstaller (the freeze profile in Pixeval is the model); troubleshooting (Windows icon format, the pywebview API walk, console noise, WebView2).
+- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started, nine native-function pages, token and health, when the backend stops, a long task, For frontend developers, Security). Still to add: the shell's own splash and first-run check (a page with a demonstration).
+- [ ] **Guides** (pages of the site, also Markdown in `docs/`; Getting started, For frontend developers and Security exist as pages, not yet as Markdown): the contract (exact names, token handover, health, shutdown); configuring identity and backend; native functions as one guide; freezing with PyInstaller (the freeze profile in Pixeval is the model); troubleshooting (Windows icon format, the pywebview API walk, console noise, WebView2).
 - [ ] **Reference** generated from the config classes and docstrings.
-- [ ] **A page for frontend developers:** what the page may assume (the token cookie, the bridge object) and nothing else.
-- [ ] **A security page:** loopback only, the per-launch token, the origin check, what the page may and may not ask the shell.
 - [ ] **Tests for the samples of the pages still to come** (the existing pages are covered: backend, launcher sample, build freshness, headless Qt run).
 - [ ] **Static copy on GitHub Pages**, demo buttons marked "run this in the shell".
 

@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import replace
 from pathlib import Path
 
@@ -67,6 +68,14 @@ def test_the_backend_is_started_by_the_shell_and_follows_the_contract(site_path,
         )
         assert httpx.get(f"{process.base_url}/api/version").status_code == 401
         assert httpx.get(f"{process.base_url}/api/health").json() == {"status": "ok"}  # open to anyone
+        assert httpx.post(f"{process.base_url}/api/job", headers=headers).json() == {"steps": 10}
+        assert httpx.post(f"{process.base_url}/api/job", headers=headers).status_code == 409  # one at a time
+        for _ in range(40):
+            status = httpx.get(f"{process.base_url}/api/job", headers=headers).json()
+            if not status["running"]:
+                break
+            time.sleep(0.2)
+        assert status == {"running": False, "done": 10, "steps": 10}
         refused = httpx.post(f"{process.base_url}/api/save", json={"path": str(missing), "text": ""}, headers=headers)
         assert refused.status_code == 400
 
@@ -90,6 +99,7 @@ def test_the_committed_build_contains_the_code_it_shows():
     for shown in ("async def save_note", "async def list_folder", "async def crash", "class BackendWatchdog"):
         assert shown in bundle, shown
     assert "whereAmI" in bundle
+    assert "async def start_job" in bundle
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")
@@ -117,3 +127,16 @@ def test_the_sites_own_native_functions_run_through_the_registry(site_path):
     place = registry.call(None, "whereAmI", [])["value"]
     assert set(place) == {"system", "release", "python"}
     assert registry.call(None, "greet", [])["ok"] is False  # missing argument: refused in plain words
+
+
+def test_the_security_page_states_what_the_library_really_does():
+    """The page makes claims; these keep them true."""
+    from webapp_shell import ShellConfig
+    from webapp_shell.native.os_actions import OsActions
+    from webapp_shell.protocol import WireProtocol
+
+    page = (SITE / "src" / "pages" / "Security.tsx").read_text()
+    assert {"http", "https", "mailto"} == OsActions.ALLOWED_URL_SCHEMES
+    assert all(f"<code>{scheme}</code>" in page for scheme in OsActions.ALLOWED_URL_SCHEMES)
+    assert ShellConfig.__dataclass_fields__["host"].default == "127.0.0.1" and "127.0.0.1" in page
+    assert WireProtocol.for_slug("x").ws_close_unauthorized == 4401 and "4401" in page
