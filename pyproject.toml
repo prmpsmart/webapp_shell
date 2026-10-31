@@ -7,8 +7,10 @@ name = "webapp-shell"
 version = "0.1.0"
 description = "A desktop window for a web app made of a Python backend and a compiled frontend."
 readme = "README.md"
-requires-python = ">=3.11"
-authors = [{ name = "PRMPSmart", email = "prmpsmart@gmail.com" }]
+requires-python = ">=3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Miracle Apata", email = "prmpsmart@gmail.com" }]  # "prmpsmart" is the handle
 dependencies = ["httpx>=0.28", "pywebview>=6.2"]
 
 [project.optional-dependencies]
@@ -26,7 +28,7 @@ pythonpath = ["src", "tests"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py311"
+target-version = "py313"
 src = ["src", "tests"]
 
 [tool.ruff.lint]

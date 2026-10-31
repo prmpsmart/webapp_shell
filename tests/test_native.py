@@ -66,18 +66,6 @@ def test_the_window_icon_is_an_ico_on_windows_and_a_png_elsewhere(settings, monk
     assert settings.window_icon == settings.identity.icon_png
 
 
-def test_both_bridges_implement_every_native_method():
-    """The page calls these by name, so each bridge class must have a method for every `NativeMethod`."""
-    from webapp_shell.enums import NativeMethod
-    from webapp_shell.native.webview_bridge import WebviewBridge
-
-    for method in NativeMethod:
-        assert callable(getattr(WebviewBridge, method.value)), method
-    qt_source = (Path(__file__).parent.parent / "src" / "webapp_shell" / "native" / "qt_bridge.py").read_text()
-    for method in NativeMethod:
-        assert f"def {method.value}(" in qt_source, method
-
-
 def test_shell_kinds_match_the_registry():
     from webapp_shell import registry
     from webapp_shell.enums import ShellKind
@@ -91,17 +79,3 @@ def test_zoom_factors_are_limited_and_only_numbers_count():
     assert clamp(1.25) == 1.25 and clamp(1) == 1.0
     assert clamp(99) == MAX_ZOOM and clamp(0.01) == MIN_ZOOM
     assert clamp("1.2") is None and clamp(None) is None and clamp(True) is None
-
-
-def test_the_webview_api_exposes_only_methods():
-    """pywebview walks every public attribute of the API object and its children. A public attribute that holds the
-    window sent it into the .NET window (`window.native...`), which failed on Windows with thread and recursion errors."""
-    from webapp_shell.enums import NativeMethod
-    from webapp_shell.native.webview_bridge import WebviewBridge
-
-    bridge = WebviewBridge()
-    bridge.bind(object())
-    public = {name: getattr(bridge, name) for name in dir(bridge) if not name.startswith("_")}
-    assert all(callable(member) for member in public.values()), public
-    exposed = {name for name, member in public.items() if getattr(member, "_serializable", True)}
-    assert exposed == {method.value for method in NativeMethod}

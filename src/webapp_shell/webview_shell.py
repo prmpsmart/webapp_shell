@@ -5,9 +5,12 @@ import time
 import webview
 
 from .enums import ShellKind
+from .native.os_actions import OsActions
 from .native.webview_background import WebviewBackground
 from .native.webview_bridge import WebviewBridge
 from .native.webview_icon import WebviewIcon
+from .native.webview_window import WebviewWindow
+from .native.window import NativeContext
 from .shell import Shell
 from .smoke import SETTLE_SECONDS, page_probe_js
 
@@ -20,7 +23,8 @@ class WebviewShell(Shell):
         self._window: webview.Window | None = None
 
     def event_loop(self, boot) -> None:
-        bridge = WebviewBridge(preferences=self.preferences)
+        native_window = WebviewWindow()
+        bridge = WebviewBridge(self.native, NativeContext(native_window, self.preferences, OsActions()))
         self._window = webview.create_window(
             self.settings.identity.name,
             html=self.splash.loading(),
@@ -29,7 +33,7 @@ class WebviewShell(Shell):
             width=self.settings.window_size[0],
             height=self.settings.window_size[1],
         )
-        bridge.bind(self._window)
+        native_window.bind(self._window)
         icon = str(self.settings.window_icon) if self.settings.window_icon else None
         background = WebviewBackground(self.settings.background_color)
         dock_icon = WebviewIcon(self.settings.icon_png)

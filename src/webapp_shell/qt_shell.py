@@ -12,7 +12,10 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication
 
 from .enums import ShellKind
+from .native.os_actions import OsActions
 from .native.qt_bridge import CHANNEL_OBJECT, QtBridge
+from .native.qt_window import QtWindow
+from .native.window import NativeContext
 from .shell import Shell
 from .smoke import SETTLE_SECONDS, page_probe_js
 
@@ -86,13 +89,14 @@ class QtShell(Shell):
 
     def _install_native_bridge(self) -> None:
         self._channel = QWebChannel(self._view.page())
-        self._channel.registerObject(CHANNEL_OBJECT, QtBridge(self._view, preferences=self.preferences))
+        context = NativeContext(QtWindow(self._view), self.preferences, OsActions())
+        self._channel.registerObject(CHANNEL_OBJECT, QtBridge(self.native, context, self._view))
         self._view.page().setWebChannel(self._channel)
         script = QWebEngineScript()
         script.setName(f"{self.settings.identity.slug}-native")
         script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentReady)
         script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld)
-        script.setSourceCode(QtBridge.page_script_source(self.settings.identity))
+        script.setSourceCode(QtBridge.page_script_source(self.settings.identity, self.native))
         self._view.page().scripts().insert(script)
 
     def _on_load_finished(self, _ok: bool) -> None:

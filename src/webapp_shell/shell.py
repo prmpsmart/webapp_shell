@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 
 from .backend_process import BackendError, BackendProcess
+from .native.registry import NativeRegistry
+from .native.standard import standard_functions
 from .preferences import ShellPreferences
 from .settings import Settings
 from .smoke import SmokeReport
@@ -35,6 +37,7 @@ class Shell(ABC):
         self.failed = False
         self.splash = SplashPage(settings.identity.name, settings.icon_png, settings.boot_colors)
         self.watchdog = BackendWatchdog(backend, self.report_error, settings.identity.name)
+        self.native = NativeRegistry((*standard_functions(), *settings.config.native_functions))
 
     @property
     def window_title(self) -> str:

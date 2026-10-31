@@ -1,6 +1,6 @@
 # Handover
 
-Written on 31 October 2026, at the end of part 1; part 2 was added the same day. It says what exists, what does not, and what is left before the
+Written on 31 October 2026, at the end of part 1; parts 2 and 3 were added the same day. It says what exists, what does not, and what is left before the
 library can be published on PyPI. Nothing here is committed or published yet.
 
 ## Where it is
@@ -51,34 +51,39 @@ library are in its `rebranding-docs/12-webapp-shell.md`.
   `is_valid_connection` and the close code. Pixeval's backend still has its own `protocol.py`, `tokens.py` and
   `security.py`; they are replaced in part 4.
 
+## What part 3 did
+
+- **A registry of native functions** (`webapp_shell.native`): `NativeFunction(name, handler)` and `NativeRegistry`. A
+  handler is called as `handler(context, *arguments)` and may raise `NativeError` to refuse in words the page shows.
+  Names are camelCase; the page is untrusted, so an unknown name, wrong arguments or a crash all come back as a plain
+  message (the details go to the log). Every answer is one envelope: `{"ok": true, "value": ...}` or
+  `{"ok": false, "error": "..."}`.
+- **The standard set written once** (`standard.py`) against `NativeContext` (a `NativeWindow`, the preferences and the OS
+  actions). Each toolkit supplies only its window (`QtWindow`, `WebviewWindow`): the dialogs and the zoom that used to
+  be duplicated in the two bridges.
+- **Transports shrank:** Qt has one slot, `call(name, argumentsJson)`, with page glue built from the registered names;
+  pywebview gets each registered function attached by name, with the window kept private (the Windows fix).
+- **Projects add their own** with `ShellConfig(native_functions=(NativeFunction("greet", handler),))`.
+- **The page-side bridge:** one ES module `bridge/webapp-shell-bridge.js` plus `.d.ts`, shipped in the wheel;
+  `python -m webapp_shell bridge --out DIR` copies it into a frontend. `getBridge({ nativeGlobal })` finds the Qt
+  object or pywebview's, waits for a late shell, unwraps the envelope, and falls back for a plain browser.
+- **Tests (125):** the registry, the standard functions against a fake window, both transports (including a replica of
+  pywebview's API walk), and the JavaScript client run under Node with a fake `window`. A wheel was built once and
+  checked for the bridge files.
+- **Wire change for Pixeval:** Pixeval's current frontend `bridge/` expects the old shapes (Qt returned `''` for a
+  cancelled dialog; each method was its own slot). Part 4 switches Pixeval's frontend to this file.
+
 ## What is not done
 
-1. **Native registry** (part 3): the native functions are still the fixed `NativeMethod` list; projects cannot add
-   their own yet. The frontend bridge package (the page-side client) does not exist.
-2. **The example site and the documentation** (`12-webapp-shell.md`, sections 7 and 8): a modern documentation website
+1. **The example site and the documentation** (`12-webapp-shell.md`, sections 7 and 8): a modern documentation website
    that demonstrates every capability, with frontend, backend and shell snippets per feature; committed `dist`; a
    static copy for GitHub Pages. Only this README exists.
-3. **Pixeval depends on the library** (part 4): replace `shell/` and the backend's `protocol.py`, `tokens.py` and
+2. **Pixeval depends on the library** (part 4): replace `shell/` and the backend's `protocol.py`, `tokens.py` and
    `security.py` with the package; adapt Pixeval's tests; lock file.
-4. **Never run through the library:** the real windows (pywebview on macOS and Windows, Qt) and `--smoke` have not been
+3. **Never run through the library:** the real windows (pywebview on macOS and Windows, Qt) and `--smoke` have not been
    run from `webapp_shell`. The code is the same as Pixeval's, which was run on macOS; Windows was never run (see
    Pixeval's `10-remaining.md`).
 
 ## What is left before PyPI
 
-1. **Decide the licence** and add a `LICENSE` file; put `license = { file = "LICENSE" }` back in `pyproject.toml`
-   (removed so the build does not fail). Not decided yet.
-2. **Recheck the name.** `webapp-shell` was free on PyPI on 28 October 2026; check again on the day.
-3. **Metadata in `pyproject.toml`:** URLs (repository, documentation, issues), classifiers (Python versions, OS,
-   framework), keywords, a real description. Confirm `requires-python` (>= 3.11; `StrEnum` is used).
-4. **A repository on GitHub** (`prmpsmart/webapp_shell`, public) and the first commit.
-5. **Finish enough to be useful:** at least part 3 and the README example run for real (a minimal backend and
-   frontend in `examples/`), so a stranger can install it and see a window. Part 1 alone is a refactor, not yet a
-   product.
-6. **Build and check:** `python -m build`, then `twine check dist/*`; install the wheel into a clean environment and run
-   the example; confirm the wheel holds `webapp_shell` and nothing else.
-7. **Dry run on TestPyPI**, then PyPI. Create the accounts with two-factor authentication; prefer _trusted
-   publishing_ (a GitHub Actions workflow that publishes on a version tag), so no token is stored.
-8. **CI:** run `pytest` and `ruff` on Linux, macOS and Windows for each push (the Windows run is what has never
-   happened).
-9. **Version and changelog:** `0.1.0` as the first release, a `CHANGELOG.md`, tags `v0.1.0`.
+Tracked in `REMAINING.md`, which is the list to work from (decisions, code, documentation and example site, checks never run, publishing steps, and Pixeval adopting the library).

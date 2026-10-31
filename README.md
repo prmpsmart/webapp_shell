@@ -6,6 +6,8 @@ in one config object; the library starts the backend, waits until it is healthy,
 file manager, open a link, zoom).
 
 > Status: 0.1.0 in preparation, not published. See `docs/HANDOVER.md`.
+>
+> By Miracle Apata ([@prmpsmart](https://github.com/prmpsmart)). MIT licence.
 
 ```python
 from pathlib import Path
@@ -36,6 +38,27 @@ parser = argparse.ArgumentParser()
 add_launch_arguments(parser, config.backend)          # --port, --frontend, --preferences-file, --token
 launch = read_launch_arguments(parser, parser.parse_args(), config.backend.wire)
 app.add_middleware(TokenGuard, validator=TokenValidator(launch.token, wire), wire=wire)
+```
+
+Native functions: the standard set (file and folder dialogs, save as, reveal, open a link, zoom, boot colours) is always
+there; a project adds its own and the page calls them by name.
+
+```python
+from webapp_shell import NativeFunction
+
+def greet(context, who):          # context.window, context.preferences, context.actions
+    return f"hello {who}"
+
+config = ShellConfig(..., native_functions=(NativeFunction("greet", greet),))
+```
+
+```js
+// copy the bridge into the frontend once: python -m webapp_shell bridge --out src/
+import { getBridge } from "./webapp-shell-bridge.js";
+
+const bridge = await getBridge({ nativeGlobal: "acmeNative" });
+const path = await bridge.pickFile([{ name: "Excel", extensions: ["xlsx"] }]);
+const hello = await bridge.call("greet", "Ada");
 ```
 
 Install: `pip install webapp-shell` (pywebview is included); `pip install "webapp-shell[qt]"` adds Qt, and
