@@ -73,9 +73,16 @@ library are in its `rebranding-docs/12-webapp-shell.md`.
 - **Wire change for Pixeval:** Pixeval's current frontend `bridge/` expects the old shapes (Qt returned `''` for a
   cancelled dialog; each method was its own slot). Part 4 switches Pixeval's frontend to this file.
 
+## The minimal example
+
+`examples/minimal/` (Acme Notes): backend, one-page frontend with `webapp-shell-bridge.js` copied in, launcher, README.
+`tests/test_example_minimal.py` starts the backend through the shell's own `BackendProcess` and checks the token, and
+runs the Qt shell headless (`app.py qt --smoke`, offscreen) to prove the glue, the channel and the bridge file work
+together: the page reported `native: acmeNative` and its title from the bridge. 128 tests in all.
+
 ## What is not done
 
-1. **The example site and the documentation** (`12-webapp-shell.md`, sections 7 and 8): a modern documentation website
+1. **The documentation site** (`12-webapp-shell.md`, sections 7 and 8): a modern documentation website
    that demonstrates every capability, with frontend, backend and shell snippets per feature; committed `dist`; a
    static copy for GitHub Pages. Only this README exists.
 2. **Pixeval depends on the library** (part 4): replace `shell/` and the backend's `protocol.py`, `tokens.py` and

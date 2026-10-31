@@ -66,4 +66,4 @@ Install: `pip install webapp-shell` (pywebview is included); `pip install "webap
 
 On Windows the pywebview window needs the WebView2 runtime (present on Windows 11); `pythonnet` is installed by pywebview.
 
-The design is in `docs/` (the decisions are in the Pixeval repository, `rebranding-docs/12-webapp-shell.md`).
+A runnable minimal program is in `examples/minimal/`. The design is in `docs/` (the decisions are in the Pixeval repository, `rebranding-docs/12-webapp-shell.md`).

@@ -16,7 +16,7 @@ dependencies = ["httpx>=0.28", "pywebview>=6.2"]
 [project.optional-dependencies]
 qt = ["PySide6>=6.9"]
 backend = ["starlette>=0.40"]
-dev = ["pytest>=8", "ruff>=0.5", "PySide6>=6.9", "starlette>=0.40"]
+dev = ["pytest>=8", "ruff>=0.5", "PySide6>=6.9", "starlette>=0.40", "uvicorn>=0.30"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/webapp_shell"]
@@ -29,7 +29,7 @@ pythonpath = ["src", "tests"]
 [tool.ruff]
 line-length = 120
 target-version = "py313"
-src = ["src", "tests"]
+src = ["src", "tests", "examples/minimal"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]

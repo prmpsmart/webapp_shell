@@ -1,6 +1,6 @@
 # Remaining
 
-Everything still open before `webapp-shell` is published on PyPI as a library people can use, in one place. `[ ]` is open; `[x]` is done. Last updated 31 October 2026. Parts 1, 2 and 3 are done (see `HANDOVER.md`).
+Everything still open before `webapp-shell` is published on PyPI as a library people can use, in one place. `[ ]` is open; `[x]` is done. Last updated 31 October 2026. Parts 1, 2 and 3 and the minimal example are done (see `HANDOVER.md`).
 
 At a glance: **A** decisions for the owner, **B** code still to write, **C** the example site and the documentation, **D** checks that have never been run, **E** publishing, **F** Pixeval adopts it (not needed to publish), **G** small items.
 
@@ -24,7 +24,7 @@ At a glance: **A** decisions for the owner, **B** code still to write, **C** the
 
 ## C. The example site and the documentation
 
-- [ ] **`examples/`: a minimal app** (the README example, runnable): a small Python backend and a one-page frontend.
+- [x] **`examples/minimal/`: a minimal app** (31 October 2026): a Starlette backend that follows the contract, a one-page frontend with the bridge copied in, a fifteen-line launcher, a README. Run for real by `tests/test_example_minimal.py`.
 - [ ] **The documentation website** as the example: a modern docs look (sidebar, search, code samples, light and dark), opened by the library's own shell, a live demonstration of every capability: choose a file or folder, save as, reveal, open a link, zoom, boot colours, token handover and health, a running backend job, the backend stopping.
 - [ ] **Three snippets per feature page:** frontend, backend and shell (`12-webapp-shell.md` of the Pixeval repository, section 8).
 - [ ] **Committed `dist` of that frontend**, so running the example needs only Python.
@@ -37,7 +37,8 @@ At a glance: **A** decisions for the owner, **B** code still to write, **C** the
 
 ## D. Checks that have never been run
 
-- [ ] **A real window from the library on macOS:** pywebview, then Qt; `--smoke` too. (Same code as Pixeval's shell, but never run from here.)
+- [x] **Qt, headless, on macOS** (31 October 2026): `app.py qt --smoke` runs the real QWebChannel glue with the bridge file; the page found `acmeNative` (now a test).
+- [ ] **A real window from the library on macOS:** pywebview (`python examples/minimal/app.py --smoke`, which shows a window for a few seconds) and a visible Qt window; click “Choose a file” and check the path reaches the backend.
 - [ ] **Windows:** pywebview with WebView2 and `pythonnet`; the `.ico` window icon; the native bridge without the `[pywebview] Error while processing window.native` flood. Never run, in Pixeval either.
 - [ ] **Linux** (GTK/Qt WebKit): at least a smoke run.
 - [ ] **Starlette versions:** tested on 0.46.2 only; try the minimum in `pyproject.toml` (0.40) and a current one. Same for pywebview (`>=6.2`).
