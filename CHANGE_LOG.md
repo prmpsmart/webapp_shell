@@ -22,3 +22,4 @@ The first version (not yet published). What it holds:
 - Plainer start-up errors: a backend that stops while starting reports its exit code; one that never answers names the health path and the seconds waited.
 - On Windows, a missing WebView2 runtime is found before any window opens and reported in a message box with the download page (`webapp_shell.webview2`).
 - The example site colours every code block (Python, TypeScript, shell) with highlight.js; the README links to the documentation site.
+- Example site: every code card has a Copy button; in a plain browser the demos use the browser's own features (file, folder and save pickers, zoom, theme colour, new-tab links), with a note that a browser never gives a path on the disk. Only "Show in the file manager" needs the shell.

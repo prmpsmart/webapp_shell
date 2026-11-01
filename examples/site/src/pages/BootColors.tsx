@@ -3,6 +3,7 @@ import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
 import { rememberBootColors } from '../demos/bootColors'
+import { themeColorInBrowser } from '../browserNative'
 import frontendCode from '../demos/bootColors.ts?raw'
 
 const SNIPPETS = codeFor(['src/demos/bootColors.ts', frontendCode], null, ['app.py', shellCode])
@@ -12,7 +13,26 @@ function Colors() {
   const [glowA, setGlowA] = useState('#1d2b4a')
   const [glowB, setGlowB] = useState('#3b4f8a')
   return (
-    <Demo>
+    <Demo
+      inBrowser={(show) => (
+        <>
+          <label>
+            base <input type="color" value={base} onChange={(event) => setBase(event.target.value)} />
+          </label>
+          <button
+            className="primary"
+            onClick={() => {
+              themeColorInBrowser(base)
+              show(
+                "Set as the page's theme colour: the browser may paint its tab strip or address bar with it.",
+              )
+            }}
+          >
+            Use this colour
+          </button>
+        </>
+      )}
+    >
       {(bridge, show) => (
         <>
           <div className="row">

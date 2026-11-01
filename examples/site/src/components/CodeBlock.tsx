@@ -1,8 +1,15 @@
+import { useEffect, useState } from 'react'
 import hljs from 'highlight.js/lib/core'
 import bash from 'highlight.js/lib/languages/bash'
 import json from 'highlight.js/lib/languages/json'
 import python from 'highlight.js/lib/languages/python'
 import typescript from 'highlight.js/lib/languages/typescript'
+
+enum CopyState {
+  Idle = 'Copy',
+  Copied = 'Copied',
+  Failed = 'Could not copy',
+}
 
 export enum Language {
   Python = 'python',
@@ -30,12 +37,55 @@ export function languageOf(file: string): Language {
   return BY_EXTENSION[file.split('.').pop() ?? ''] ?? Language.Python
 }
 
-/** A highlighted block of code. The text is ours (never the visitor's) and `highlight` escapes it. */
+const COPIED_MS = 1500
+
+/** Puts text on the clipboard. The clipboard API needs a secure page; a window that is not one falls back to a hidden field. */
+async function copyText(text: string): Promise<void> {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text)
+  const field = document.createElement('textarea')
+  field.value = text
+  field.style.position = 'fixed'
+  field.style.opacity = '0'
+  document.body.append(field)
+  field.select()
+  const copied = document.execCommand('copy')
+  field.remove()
+  if (!copied) throw new Error('the browser refused to copy')
+}
+
+function CopyButton({ code }: { code: string }) {
+  const [state, setState] = useState(CopyState.Idle)
+  useEffect(() => {
+    if (state === CopyState.Idle) return
+    const timer = setTimeout(() => setState(CopyState.Idle), COPIED_MS)
+    return () => clearTimeout(timer)
+  }, [state])
+  return (
+    <button
+      type="button"
+      className="copy"
+      aria-label="Copy the code"
+      onClick={() =>
+        copyText(code).then(
+          () => setState(CopyState.Copied),
+          () => setState(CopyState.Failed),
+        )
+      }
+    >
+      {state}
+    </button>
+  )
+}
+
+/** A highlighted block of code, with a button that copies it. The text is ours (never the visitor's) and `highlight` escapes it. */
 export function CodeBlock({ code, language }: { code: string; language: Language }) {
   const html = hljs.highlight(code, { language, ignoreIllegals: true }).value
   return (
-    <pre>
-      <code className={`hljs language-${language}`} dangerouslySetInnerHTML={{ __html: html }} />
-    </pre>
+    <div className="code-body">
+      <CopyButton code={code} />
+      <pre>
+        <code className={`hljs language-${language}`} dangerouslySetInnerHTML={{ __html: html }} />
+      </pre>
+    </div>
   )
 }

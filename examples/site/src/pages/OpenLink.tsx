@@ -15,7 +15,7 @@ export function OpenLink() {
       usesBackend={false}
       snippets={SNIPPETS}
       demo={
-        <Demo>
+        <Demo needsShell={false}>
           {(bridge, show) => (
             <button
               className="primary"

@@ -4,6 +4,7 @@ import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
 import { chooseAndList, type FolderInfo } from '../demos/pickFolder'
+import { pathNote, pickFolderInBrowser, type PickedFolder } from '../browserNative'
 import frontendCode from '../demos/pickFolder.ts?raw'
 
 const SNIPPETS = codeFor(
@@ -12,10 +13,40 @@ const SNIPPETS = codeFor(
   ['app.py', shellCode],
 )
 
+function BrowserChooser({ show }: { show: (message: string) => void }) {
+  const [folder, setFolder] = useState<PickedFolder | null>(null)
+  return (
+    <>
+      <button
+        className="primary"
+        onClick={async () => {
+          show('')
+          try {
+            const chosen = await pickFolderInBrowser()
+            setFolder(chosen)
+            if (!chosen) show('Nothing chosen.')
+          } catch (error) {
+            setFolder(null)
+            show(messageOf(error))
+          }
+        }}
+      >
+        Choose a folder…
+      </button>
+      {folder && (
+        <output>
+          <b>{folder.name}</b> · {folder.count} entries (listed by the page): {folder.first.join(', ')}
+          {folder.count > folder.first.length ? ', …' : ''} · {pathNote(folder.path)}
+        </output>
+      )}
+    </>
+  )
+}
+
 function Chooser() {
   const [info, setInfo] = useState<FolderInfo | null>(null)
   return (
-    <Demo>
+    <Demo inBrowser={(show) => <BrowserChooser show={show} />}>
       {(bridge, show) => (
         <>
           <button

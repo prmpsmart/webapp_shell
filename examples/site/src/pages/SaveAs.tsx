@@ -4,6 +4,7 @@ import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
 import { chooseAndSave } from '../demos/saveAs'
+import { saveInBrowser } from '../browserNative'
 import frontendCode from '../demos/saveAs.ts?raw'
 
 const SNIPPETS = codeFor(
@@ -15,7 +16,31 @@ const SNIPPETS = codeFor(
 function Saver() {
   const [text, setText] = useState('Written by the backend, to a path the shell chose.')
   return (
-    <Demo>
+    <Demo
+      inBrowser={(show) => (
+        <>
+          <textarea value={text} onChange={(event) => setText(event.target.value)} rows={3} />
+          <button
+            className="primary"
+            onClick={async () => {
+              show('')
+              try {
+                const saved = await saveInBrowser('note.txt', text)
+                show(
+                  saved
+                    ? `Saved ${saved.bytes} bytes as ${saved.name}: ${saved.method}. The page never learns the folder.`
+                    : 'Nothing chosen.',
+                )
+              } catch (error) {
+                show(messageOf(error))
+              }
+            }}
+          >
+            Save as…
+          </button>
+        </>
+      )}
+    >
       {(bridge, show) => (
         <>
           <textarea value={text} onChange={(event) => setText(event.target.value)} rows={3} />

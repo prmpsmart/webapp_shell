@@ -337,3 +337,34 @@ textarea {
 .hljs-strong {
   font-weight: 700;
 }
+
+.code-body {
+  position: relative;
+}
+.code-body .copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--code-text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.code-body:hover .copy,
+.code-body .copy:focus-visible {
+  opacity: 1;
+}
+.code-body .copy:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+@media (hover: none) {
+  .code-body .copy {
+    opacity: 1;
+  }
+}

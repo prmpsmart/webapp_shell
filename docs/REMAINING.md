@@ -14,7 +14,7 @@ Decided 31 October 2026: the page talks only to the shell and the backend never 
 
 ## C. The example site and the documentation
 
-- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started, nine native-function pages, token and health, when the backend stops, a long task, For frontend developers, Security). Still to add: the shell's own splash and first-run check (a page with a demonstration), and the Pages copy's demo buttons marked "run this in the shell".
+- [ ] **The rest of the documentation website** (`examples/site`; done: frame, Overview, Getting started, nine native-function pages, token and health, when the backend stops, a long task, For frontend developers, Security). Still to add: the shell's own splash and first-run check (a page with a demonstration), and the Reveal page in a plain browser (it needs the shell; it only says so).
 - [ ] **Guides as site pages:** the Markdown guides exist in `docs/` (contract, configuration, native functions, freezing, translating, troubleshooting); show them in the site. The freezing guide has no ready PyInstaller spec yet.
 - [ ] **Tests for the samples of the pages still to come** (the existing pages are covered: backend, launcher sample, build freshness, headless Qt run).
 

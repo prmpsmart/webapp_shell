@@ -5,6 +5,7 @@ import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
 import { chooseAndDescribe, type FileInfo } from '../demos/pickFile'
 import frontendCode from '../demos/pickFile.ts?raw'
+import { pathNote, pickFileInBrowser, type PickedFile } from '../browserNative'
 
 const SNIPPETS = codeFor(
   ['src/demos/pickFile.ts', frontendCode],
@@ -12,10 +13,39 @@ const SNIPPETS = codeFor(
   ['app.py', shellCode],
 )
 
+function BrowserChooser({ show }: { show: (message: string) => void }) {
+  const [file, setFile] = useState<PickedFile | null>(null)
+  return (
+    <>
+      <button
+        className="primary"
+        onClick={async () => {
+          show('')
+          try {
+            const chosen = await pickFileInBrowser()
+            setFile(chosen)
+            if (!chosen) show('Nothing chosen.')
+          } catch (error) {
+            setFile(null)
+            show(messageOf(error))
+          }
+        }}
+      >
+        Choose a file…
+      </button>
+      {file && (
+        <output>
+          <b>{file.name}</b> · {file.bytes.toLocaleString()} bytes (read by the page) · {pathNote(file.path)}
+        </output>
+      )}
+    </>
+  )
+}
+
 function Chooser() {
   const [info, setInfo] = useState<FileInfo | null>(null)
   return (
-    <Demo>
+    <Demo inBrowser={(show) => <BrowserChooser show={show} />}>
       {(bridge, show) => (
         <>
           <button

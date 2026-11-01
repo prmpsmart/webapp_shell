@@ -150,3 +150,11 @@ def test_the_committed_build_colours_the_code():
     assert "hljs-" in bundle and "language-" in bundle
     for token in ("hljs-keyword", "hljs-string", "hljs-comment", "hljs-title"):
         assert token in styles
+
+
+def test_the_committed_build_has_the_copy_button_and_the_browser_alternatives():
+    """A plain browser (the Pages copy) gets the browser's own pickers instead of a dead button."""
+    assets = SITE / "frontend" / "dist" / "assets"
+    bundle = "".join(path.read_text() for path in assets.glob("*.js"))
+    for needle in ("Copy the code", "showOpenFilePicker", "showDirectoryPicker", "showSaveFilePicker", "theme-color"):
+        assert needle in bundle, needle

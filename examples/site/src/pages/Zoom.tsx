@@ -3,6 +3,7 @@ import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
 import { ZOOM_STEPS, applyZoom } from '../demos/zoom'
+import { zoomInBrowser } from '../browserNative'
 import frontendCode from '../demos/zoom.ts?raw'
 
 const SNIPPETS = codeFor(['src/demos/zoom.ts', frontendCode], null, ['app.py', shellCode])
@@ -10,7 +11,24 @@ const SNIPPETS = codeFor(['src/demos/zoom.ts', frontendCode], null, ['app.py', s
 function Zoomer() {
   const [factor, setFactor] = useState(1)
   return (
-    <Demo>
+    <Demo
+      inBrowser={() => (
+        <div className="row">
+          {ZOOM_STEPS.map((step) => (
+            <button
+              key={step}
+              className={step === factor ? 'primary' : ''}
+              onClick={() => {
+                zoomInBrowser(step)
+                setFactor(step)
+              }}
+            >
+              {Math.round(step * 100)}%
+            </button>
+          ))}
+        </div>
+      )}
+    >
       {(bridge, show) =>
         bridge.canZoom ? (
           <div className="row">
