@@ -170,3 +170,63 @@ def test_the_token_page_draws_the_token_route_not_the_file_route():
     bundle = "".join(path.read_text(encoding="utf-8") for path in assets.glob("*.js"))
     for needle in ("environment variable", "launch URL, once", "cookie on every call", "how the token is handed over"):
         assert needle in bundle, needle
+
+
+GUIDE_FILES = ("CONFIGURATION", "CONTRACT", "FREEZING", "NATIVE_FUNCTIONS", "TRANSLATING", "TROUBLESHOOTING")
+NOT_GUIDES = {"API", "REMAINING"}  # the generated listing and the list of open work are not pages
+
+
+def test_the_site_backend_gives_the_sentences_the_shell_shows(site_path):
+    from starlette.testclient import TestClient
+
+    from docs_backend import WIRE, create_app  # type: ignore
+    from webapp_shell import MessageKey
+
+    client = TestClient(create_app("t", None), headers={WIRE.token_header: "t"})
+    answer = client.get("/api/messages")
+    assert answer.status_code == 200 and set(answer.json()) == {str(key) for key in MessageKey}
+    assert TestClient(create_app("t", None)).get("/api/messages").status_code == 401
+
+
+def test_every_guide_of_docs_is_a_page_of_the_site():
+    on_disk = {path.stem for path in (ROOT / "docs").glob("*.md")} - NOT_GUIDES
+    assert on_disk == set(GUIDE_FILES), "a guide was added or removed: change pages/guides.tsx and components/Guide.tsx"
+    guides = (SITE / "src" / "pages" / "guides.tsx").read_text(encoding="utf-8")
+    shown = (SITE / "src" / "components" / "Guide.tsx").read_text(encoding="utf-8")
+    for name in GUIDE_FILES:
+        assert f"docs/{name}.md?raw" in guides and f"'{name}.md'" in shown, name
+
+
+def test_the_links_in_the_guides_go_somewhere_that_exists():
+    for name in GUIDE_FILES:
+        text = (ROOT / "docs" / f"{name}.md").read_text(encoding="utf-8")
+        for target in re.findall(r"\]\(([^)#\s]+)(?:#[^)]*)?\)", text):
+            if not target.startswith(("http", "mailto:")):
+                assert (ROOT / "docs" / target).exists(), f"{name}.md links to {target}"
+
+
+def test_every_language_a_guide_fences_is_highlighted_or_plain():
+    known = set(
+        re.findall(
+            r"^\s+(\w+): Language", (SITE / "src" / "components" / "CodeBlock.tsx").read_text(encoding="utf-8"), re.M
+        )
+    )
+    for name in GUIDE_FILES:
+        text = (ROOT / "docs" / f"{name}.md").read_text(encoding="utf-8")
+        for fence in re.findall(r"^```(\w*)", text, re.M):
+            assert fence == "" or fence in known, f"{name}.md fences {fence}, which the site does not highlight"
+
+
+def test_the_committed_build_has_the_guides_and_the_start_up_page():
+    bundle = "".join(path.read_text(encoding="utf-8") for path in (SITE / "frontend" / "dist" / "assets").glob("*.js"))
+    assert "Splash and start-up checks" in bundle and "/api/messages" in bundle
+    for name in GUIDE_FILES:
+        heading = (ROOT / "docs" / f"{name}.md").read_text(encoding="utf-8").splitlines()[0]
+        assert heading.lstrip("# ") in bundle, f"{name}: rebuild with npm run build in examples/site"
+
+
+def test_the_reveal_page_only_says_it_needs_the_shell_in_a_plain_browser():
+    """No `inBrowser`: `Demo` answers a plain browser with 'run this site in the shell' (a path is the shell's to give)."""
+    assert "inBrowser" not in (SITE / "src" / "pages" / "Reveal.tsx").read_text(encoding="utf-8")
+    demo = (SITE / "src" / "components" / "Demo.tsx").read_text(encoding="utf-8")
+    assert "Run this site in the shell" in demo

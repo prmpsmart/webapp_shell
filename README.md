@@ -1,5 +1,11 @@
 # webapp-shell
 
+[![CI](https://github.com/prmpsmart/webapp_shell/actions/workflows/ci.yml/badge.svg)](https://github.com/prmpsmart/webapp_shell/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/webapp-shell)](https://pypi.org/project/webapp-shell/)
+[![Python](https://img.shields.io/pypi/pyversions/webapp-shell)](https://pypi.org/project/webapp-shell/)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-site-3556d6)](https://prmpsmart.github.io/webapp_shell)
+
 A desktop window for a web app made of a **Python backend** and a **compiled frontend**. Your project describes itself
 in one config object; the library starts the backend, waits until it is healthy, opens the frontend in a native window
 (pywebview, or Qt on request) and gives the page a small set of native functions (file and folder dialogs, reveal in the
@@ -81,4 +87,5 @@ library's own shell, with a live demonstration of every feature.
 Guides (`docs/`): [the contract](docs/CONTRACT.md), [configuration](docs/CONFIGURATION.md),
 [native functions](docs/NATIVE_FUNCTIONS.md), [freezing with PyInstaller](docs/FREEZING.md),
 [translating](docs/TRANSLATING.md), [troubleshooting](docs/TROUBLESHOOTING.md), and the generated
-[API listing](docs/API.md).
+[API listing](docs/API.md) (the public API: nothing that is not listed there is promised). The same guides are pages of
+the documentation site. To work on the library, read [CONTRIBUTING.md](CONTRIBUTING.md).

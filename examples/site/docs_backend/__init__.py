@@ -17,6 +17,7 @@ from .crash import crash
 from .describe import describe
 from .job import job_status, start_job
 from .list_folder import list_folder
+from .messages import messages
 from .save_note import save_note
 
 WIRE = WireProtocol.for_slug("docs")
@@ -37,6 +38,7 @@ def create_app(token: str, frontend: Path | None) -> Starlette:
         Route(WIRE.version_path or f"{WIRE.api_prefix}/version", version),
         Route(f"{WIRE.api_prefix}/describe", describe),
         Route(f"{WIRE.api_prefix}/folder", list_folder),
+        Route(f"{WIRE.api_prefix}/messages", messages),
         Route(f"{WIRE.api_prefix}/job", start_job, methods=["POST"]),
         Route(f"{WIRE.api_prefix}/job", job_status),
         Route(f"{WIRE.api_prefix}/crash", crash, methods=["POST"]),

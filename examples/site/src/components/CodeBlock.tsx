@@ -16,12 +16,31 @@ export enum Language {
   TypeScript = 'typescript',
   Shell = 'bash',
   Json = 'json',
+  /** No highlighting: a diagram or output, whose fence names no language. */
+  Plain = 'text',
 }
 
 hljs.registerLanguage(Language.Python, python)
 hljs.registerLanguage(Language.TypeScript, typescript)
 hljs.registerLanguage(Language.Shell, bash)
 hljs.registerLanguage(Language.Json, json)
+
+/** The language of a Markdown fence (```python, ```sh); a fence without one is shown as it is. */
+const BY_FENCE: Record<string, Language> = {
+  python: Language.Python,
+  py: Language.Python,
+  typescript: Language.TypeScript,
+  ts: Language.TypeScript,
+  tsx: Language.TypeScript,
+  js: Language.TypeScript,
+  json: Language.Json,
+  sh: Language.Shell,
+  bash: Language.Shell,
+  shell: Language.Shell,
+}
+
+export const languageOfFence = (fence: string | undefined): Language =>
+  BY_FENCE[(fence ?? '').replace('language-', '')] ?? Language.Plain
 
 const BY_EXTENSION: Record<string, Language> = {
   py: Language.Python,
@@ -79,12 +98,17 @@ function CopyButton({ code }: { code: string }) {
 
 /** A highlighted block of code, with a button that copies it. The text is ours (never the visitor's) and `highlight` escapes it. */
 export function CodeBlock({ code, language }: { code: string; language: Language }) {
-  const html = hljs.highlight(code, { language, ignoreIllegals: true }).value
+  const plain = language === Language.Plain
+  const html = plain ? '' : hljs.highlight(code, { language, ignoreIllegals: true }).value
   return (
     <div className="code-body">
       <CopyButton code={code} />
       <pre>
-        <code className={`hljs language-${language}`} dangerouslySetInnerHTML={{ __html: html }} />
+        {plain ? (
+          <code className="hljs">{code}</code>
+        ) : (
+          <code className={`hljs language-${language}`} dangerouslySetInnerHTML={{ __html: html }} />
+        )}
       </pre>
     </div>
   )

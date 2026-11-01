@@ -10,10 +10,19 @@ import { OpenLink } from './pages/OpenLink'
 import { OwnFunction } from './pages/OwnFunction'
 import { Overview } from './pages/Overview'
 import { Reveal } from './pages/Reveal'
+import { StartUp } from './pages/StartUp'
 import { SaveAs } from './pages/SaveAs'
 import { Security } from './pages/Security'
 import { TokenAndHealth } from './pages/TokenAndHealth'
 import { Zoom } from './pages/Zoom'
+import {
+  ConfigurationGuide,
+  ContractGuide,
+  FreezingGuide,
+  NativeFunctionsGuide,
+  TranslatingGuide,
+  TroubleshootingGuide,
+} from './pages/guides'
 
 export enum PageId {
   Overview = 'overview',
@@ -27,10 +36,17 @@ export enum PageId {
   ChooseFolder = 'choose-folder',
   OwnFunction = 'own-function',
   TokenAndHealth = 'token-and-health',
+  StartUp = 'start-up',
   BackendStopping = 'backend-stopping',
   BackendJob = 'backend-job',
   ForFrontend = 'for-frontend',
   Security = 'security',
+  GuideContract = 'guide-contract',
+  GuideConfiguration = 'guide-configuration',
+  GuideNativeFunctions = 'guide-native-functions',
+  GuideFreezing = 'guide-freezing',
+  GuideTranslating = 'guide-translating',
+  GuideTroubleshooting = 'guide-troubleshooting',
 }
 
 export enum Section {
@@ -127,6 +143,13 @@ export const PAGES: Page[] = [
     component: TokenAndHealth,
   },
   {
+    id: PageId.StartUp,
+    title: 'Splash and start-up checks',
+    section: Section.Contract,
+    keywords: 'splash startup first run library check webview2 messages error timeout translate',
+    component: StartUp,
+  },
+  {
     id: PageId.BackendStopping,
     title: 'When the backend stops',
     section: Section.Contract,
@@ -153,6 +176,48 @@ export const PAGES: Page[] = [
     section: Section.Guides,
     keywords: 'token loopback origin cookie validate trust threat',
     component: Security,
+  },
+  {
+    id: PageId.GuideContract,
+    title: 'The contract (guide)',
+    section: Section.Guides,
+    keywords: 'wire token header cookie health shutdown backend launch arguments starlette guard',
+    component: ContractGuide,
+  },
+  {
+    id: PageId.GuideConfiguration,
+    title: 'Configuration (guide)',
+    section: Section.Guides,
+    keywords: 'AppIdentity BackendSpec ShellConfig identity storage colours flags',
+    component: ConfigurationGuide,
+  },
+  {
+    id: PageId.GuideNativeFunctions,
+    title: 'Native functions (guide)',
+    section: Section.Guides,
+    keywords: 'NativeFunction arguments dataclass bridge register envelope error',
+    component: NativeFunctionsGuide,
+  },
+  {
+    id: PageId.GuideFreezing,
+    title: 'Freezing (guide)',
+    section: Section.Guides,
+    keywords: 'pyinstaller freeze plan build executable bundle',
+    component: FreezingGuide,
+  },
+  {
+    id: PageId.GuideTranslating,
+    title: 'Translating (guide)',
+    section: Section.Guides,
+    keywords: 'messages language translate catalogue ShellMessages json',
+    component: TranslatingGuide,
+  },
+  {
+    id: PageId.GuideTroubleshooting,
+    title: 'Troubleshooting (guide)',
+    section: Section.Guides,
+    keywords: 'error problem 401 4401 icon console webview2 fix',
+    component: TroubleshootingGuide,
   },
 ]
 

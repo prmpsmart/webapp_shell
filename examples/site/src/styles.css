@@ -368,3 +368,26 @@ textarea {
     opacity: 1;
   }
 }
+
+/* A guide of docs/ shown as a page (Markdown): code blocks stand alone, tables get lines */
+.guide .code-body pre {
+  border-radius: 10px;
+}
+.guide table,
+.demo table {
+  width: 100%;
+  margin: 0.75rem 0;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.guide th,
+.guide td,
+.demo td {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.guide th {
+  background: var(--panel);
+}
