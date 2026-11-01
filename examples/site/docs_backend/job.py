@@ -11,7 +11,7 @@ STEPS = 10
 class Job:
     done: int = 0
     running: bool = False
-    task: asyncio.Task | None = field(default=None, repr=False)  # kept, or the loop may drop a task nobody awaits
+    task: asyncio.Task[None] | None = field(default=None, repr=False)  # kept, or the loop may drop a task nobody awaits
 
 
 job = Job()

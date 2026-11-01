@@ -1,5 +1,6 @@
 from webapp_shell.backend_process import BackendError
-from webapp_shell.watchdog import GIVE_UP_MESSAGE, BackendWatchdog
+from webapp_shell.messages import MessageKey, ShellMessages
+from webapp_shell.watchdog import BackendWatchdog
 
 
 class FakeBackend:
@@ -40,7 +41,7 @@ def test_it_gives_up_after_too_many_restarts_in_a_short_time():
     for _ in range(3):
         backend.died = True
         dog.check()
-    assert backend.restarts == 2 and said == [GIVE_UP_MESSAGE.format(name="the program")]
+    assert backend.restarts == 2 and said == [ShellMessages().text(MessageKey.BACKEND_GAVE_UP, name="the program")]
 
 
 def test_old_restarts_are_forgotten():

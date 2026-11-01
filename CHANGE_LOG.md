@@ -13,3 +13,9 @@ The first version (not yet published). What it holds:
 - **The page-side bridge:** `webapp-shell-bridge.js` with its `.d.ts`, copied into a frontend with `python -m webapp_shell bridge --out DIR`.
 - **Documentation site:** fifteen pages with live demonstrations and Frontend/Backend/Shell code tabs, a page for frontend developers and a security page whose claims are checked by tests.
 - **Examples:** `examples/minimal` and the documentation site `examples/site`.
+- `ShellMessages` / `MessageKey`: the shell's own sentences as one catalogue a project can translate (`ShellConfig.messages`); `python -m webapp_shell messages` prints it as JSON for a frontend; `docs/TRANSLATING.md`.
+- `docs/API.md`, generated from the source by `tools/api_listing.py` (a test keeps it current).
+- Guides: contract, configuration, native functions, freezing, troubleshooting (their Python samples are checked by a test).
+- Pyright strict also covers the examples; CI (3 systems, Python 3.13), a Pages workflow and a trusted-publishing release workflow.
+- Package metadata (classifiers, URLs, keywords); the wheel and sdist pass `twine check`.
+- Name checked free on PyPI on 1 November 2026. Checked: Starlette 0.40 and 1.10, pywebview 6.2 and 6.2.1; a clean install of the built wheel runs the example.

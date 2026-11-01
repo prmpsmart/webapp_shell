@@ -37,7 +37,7 @@ class Shell(ABC):
         self.backend_version: JsonObject = {}
         self.failed = False
         self.splash = SplashPage(settings.identity.name, settings.icon_png, settings.boot_colors)
-        self.watchdog = BackendWatchdog(backend, self.report_error, settings.identity.name)
+        self.watchdog = BackendWatchdog(backend, self.report_error, settings.identity.name, settings.config.messages)
         self.native = NativeRegistry((*standard_functions(), *settings.config.native_functions))
 
     @property

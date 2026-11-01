@@ -6,7 +6,7 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.routing import Mount, Route
+from starlette.routing import BaseRoute, Mount, Route
 from starlette.staticfiles import StaticFiles
 
 from webapp_shell.contract import TokenValidator
@@ -34,7 +34,7 @@ async def describe(request: Request) -> JSONResponse:
 
 
 def create_app(token: str, frontend: Path | None) -> Starlette:
-    routes = [
+    routes: list[BaseRoute] = [
         Route("/api/health", health),
         Route("/api/version", version),
         Route("/api/describe", describe),

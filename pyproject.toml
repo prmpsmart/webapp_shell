@@ -11,12 +11,36 @@ requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Miracle Apata", email = "prmpsmart@gmail.com" }]  # "prmpsmart" is the handle
+keywords = ["desktop", "webview", "pywebview", "python", "frontend", "backend", "shell", "native"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Typing :: Typed",
+]
 dependencies = ["httpx>=0.28", "pywebview>=6.2"]
+
+[project.urls]
+Homepage = "https://github.com/prmpsmart/webapp_shell"
+Documentation = "https://prmpsmart.github.io/webapp_shell"
+Source = "https://github.com/prmpsmart/webapp_shell"
+Issues = "https://github.com/prmpsmart/webapp_shell/issues"
+Changelog = "https://github.com/prmpsmart/webapp_shell/blob/main/CHANGE_LOG.md"
 
 [project.optional-dependencies]
 qt = ["PySide6>=6.9"]
 backend = ["starlette>=0.40"]
 dev = ["pytest>=8", "ruff>=0.5", "PySide6>=6.9", "starlette>=0.40", "uvicorn>=0.30"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "docs", "tools", "examples", "README.md", "LICENSE", "CHANGE_LOG.md", "change_logs", "pyproject.toml"]
+exclude = ["examples/*/node_modules", "examples/*/frontend/node_modules"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/webapp_shell"]
@@ -36,8 +60,6 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 ignore = ["E501", "RUF001", "RUF002", "RUF003"]
 
 [tool.pyright]
-include = ["src"]
-typeCheckingMode = "strict"
+include = ["src", "examples/minimal", "examples/site/app.py", "examples/site/native_functions.py", "examples/site/docs_backend"]
+typeCheckingMode = "strict"  # the library and the examples; the tests use fakes that are not the real types
 pythonVersion = "3.13"
-venvPath = "/Users/miracle-apata/Documents/Workspace/Aescolan"
-venv = "aescolan"

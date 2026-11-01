@@ -233,6 +233,7 @@ class TestWebviewBridge:
 class TestQtBridge:
     @pytest.fixture
     def bridge(self, registry, context):
+        pytest.importorskip("PySide6")  # the Qt extra is optional
         from webapp_shell.native.qt_bridge import QtBridge
 
         return QtBridge(registry, context)
@@ -249,6 +250,7 @@ class TestQtBridge:
         assert json.loads(bridge.call("setZoom", ""))["ok"] is False  # called without its argument
 
     def test_the_page_script_lists_the_registered_names_and_the_slug(self, registry, config):
+        pytest.importorskip("PySide6")
         from webapp_shell.native import qt_bridge
 
         glue = qt_bridge._GLUE_JS % {

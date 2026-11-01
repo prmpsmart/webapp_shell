@@ -10,6 +10,7 @@ import httpx
 
 from .backend import CliFlag
 from .json_types import JsonObject, JsonValue
+from .messages import MessageKey
 from .settings import Settings
 
 
@@ -45,7 +46,7 @@ class BackendProcess:
 
     def start(self) -> None:
         if not (self._settings.frontend_dist / "index.html").is_file():
-            raise BackendError(f"the compiled frontend is missing: {self._settings.frontend_dist}")
+            raise BackendError(self._say(MessageKey.FRONTEND_MISSING, path=str(self._settings.frontend_dist)))
         self._port = self._port or self._free_port()  # a restart keeps the address the open page knows
         self._proc = subprocess.Popen(self._command(), env=self._environment())
         self._wait_until_healthy()
@@ -79,8 +80,11 @@ class BackendProcess:
         response.raise_for_status()
         body: JsonValue = response.json()
         if not isinstance(body, dict):
-            raise BackendError("the version path did not answer with an object")
+            raise BackendError(self._say(MessageKey.VERSION_NOT_OBJECT))
         return body
+
+    def _say(self, key: MessageKey, **values: str) -> str:
+        return self._settings.config.messages.text(key, **values)
 
     def _command(self) -> list[str]:
         backend = self._settings.config.backend
@@ -120,4 +124,4 @@ class BackendProcess:
             except httpx.HTTPError:
                 time.sleep(0.2)
         self.stop()
-        raise BackendError("the backend did not start")
+        raise BackendError(self._say(MessageKey.BACKEND_NOT_STARTED))

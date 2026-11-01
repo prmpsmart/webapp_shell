@@ -5,8 +5,6 @@ in one config object; the library starts the backend, waits until it is healthy,
 (pywebview, or Qt on request) and gives the page a small set of native functions (file and folder dialogs, reveal in the
 file manager, open a link, zoom).
 
-> Status: 0.1 in preparation, not published. See `docs/HANDOVER.md`.
->
 > By Miracle Apata ([@prmpsmart](https://github.com/prmpsmart)). MIT licence.
 
 ```python
@@ -71,4 +69,10 @@ Install: `pip install webapp-shell` (pywebview is included); `pip install "webap
 
 On Windows the pywebview window needs the WebView2 runtime (present on Windows 11); `pythonnet` is installed by pywebview.
 
-A runnable minimal program is in `examples/minimal/`. The design is in `docs/` (the decisions are in the Pixeval repository, `rebranding-docs/12-webapp-shell.md`).
+A runnable minimal program is in `examples/minimal/`, and `examples/site/` is the documentation website, opened by the
+library's own shell, with a live demonstration of every feature.
+
+Guides (`docs/`): [the contract](docs/CONTRACT.md), [configuration](docs/CONFIGURATION.md),
+[native functions](docs/NATIVE_FUNCTIONS.md), [freezing with PyInstaller](docs/FREEZING.md),
+[translating](docs/TRANSLATING.md), [troubleshooting](docs/TROUBLESHOOTING.md), and the generated
+[API listing](docs/API.md).

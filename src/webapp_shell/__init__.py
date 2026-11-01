@@ -11,6 +11,7 @@ from .config import ShellConfig
 from .enums import NativeMethod, ShellKind
 from .identity import AppIdentity
 from .json_types import JsonObject, JsonValue
+from .messages import MessageKey, ShellMessages
 from .native.errors import NativeError
 from .native.registry import NativeCallable, NativeFunction, NoArguments
 from .native.window import NativeContext, NativeWindow
@@ -24,6 +25,7 @@ __all__ = [
     "CliFlag",
     "JsonObject",
     "JsonValue",
+    "MessageKey",
     "NativeCallable",
     "NativeContext",
     "NativeError",
@@ -33,6 +35,7 @@ __all__ = [
     "NoArguments",
     "ShellConfig",
     "ShellKind",
+    "ShellMessages",
     "WireProtocol",
     "run",
 ]

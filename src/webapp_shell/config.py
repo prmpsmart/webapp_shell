@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .backend import BackendSpec
 from .identity import AppIdentity
+from .messages import ENGLISH, ShellMessages
 from .native.registry import NativeCallable
 
 
@@ -19,3 +20,4 @@ class ShellConfig:
     splash_seconds: float = 0.0
     native_functions: tuple[NativeCallable, ...] = ()  # the project's own, added to the standard ones
     required_libraries: tuple[str, ...] = ()  # imported by `--check-libraries` on a frozen program
+    messages: ShellMessages = ENGLISH  # the shell's own sentences, in the project's language

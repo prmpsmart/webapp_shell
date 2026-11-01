@@ -6,8 +6,7 @@ from collections import deque
 from collections.abc import Callable
 
 from .backend_process import BackendError, BackendProcess
-
-GIVE_UP_MESSAGE = "The backend stopped several times in a row. Close {name} and open it again."
+from .messages import ENGLISH, MessageKey, ShellMessages
 
 
 class BackendWatchdog:
@@ -16,13 +15,14 @@ class BackendWatchdog:
         backend: BackendProcess,
         give_up: Callable[[str], None],
         name: str = "the program",
+        messages: ShellMessages = ENGLISH,
         interval: float = 1.0,
         max_restarts: int = 3,
         window: float = 120.0,
         clock: Callable[[], float] = time.monotonic,
     ):
         self.backend, self.give_up = backend, give_up
-        self._give_up_message = GIVE_UP_MESSAGE.format(name=name)
+        self._give_up_message = messages.text(MessageKey.BACKEND_GAVE_UP, name=name)
         self.interval, self.max_restarts, self.window = interval, max_restarts, window
         self._clock = clock
         self._restarts: deque[float] = deque()

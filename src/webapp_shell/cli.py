@@ -10,6 +10,7 @@ from .config import ShellConfig
 from .enums import ShellKind
 from .installation import Installation, ensure_standard_streams
 from .library_check import LibraryCheck
+from .messages import MessageKey
 from .preferences import ShellPreferences
 from .settings import Settings
 
@@ -40,7 +41,7 @@ def run_backend(config: ShellConfig, argv: list[str]) -> int:
 
 def check_libraries(config: ShellConfig) -> int:
     problems = LibraryCheck(config.required_libraries).problems()
-    print("\n".join(map(str, problems)) or "all libraries are present")
+    print("\n".join(map(str, problems)) or config.messages.text(MessageKey.LIBRARIES_PRESENT))
     return 1 if problems else 0
 
 
