@@ -57,7 +57,9 @@ def test_the_backend_is_started_by_the_shell_and_follows_the_contract(example_se
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")
 def test_the_page_finds_the_qt_shells_object_through_the_real_channel(tmp_path):
     """The headless Qt run: real QWebChannel, the injected glue, and the page's bridge file together."""
-    pytest.importorskip("PySide6.QtWebEngineWidgets")
+    pytest.importorskip(
+        "PySide6.QtWebEngineWidgets", exc_type=ImportError
+    )  # a machine without the system libraries skips
     env = {**os.environ, "PYTHONPATH": os.pathsep.join([str(ROOT / "src"), str(EXAMPLE)]), "HOME": str(tmp_path)}
     done = subprocess.run(
         [sys.executable, str(EXAMPLE / "app.py"), "qt", "--smoke"],

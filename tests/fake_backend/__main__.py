@@ -2,6 +2,7 @@
 
 import json
 import os
+import socketserver
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -31,9 +32,17 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
 
+class Server(HTTPServer):
+    def server_bind(self) -> None:
+        """`HTTPServer` asks the name service for the host's full name while binding, which can take half a minute on a
+        busy macOS machine; the test backend has no use for it."""
+        socketserver.TCPServer.server_bind(self)
+        self.server_name, self.server_port = self.server_address[0], self.server_address[1]
+
+
 def main(argv: list[str]) -> None:
     port = int(argv[argv.index("--port") + 1])
-    HTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    Server(("127.0.0.1", port), Handler).serve_forever()
 
 
 if __name__ == "__main__":
