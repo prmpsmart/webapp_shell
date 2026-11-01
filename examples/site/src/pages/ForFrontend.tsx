@@ -1,3 +1,4 @@
+import { CodeBlock, Language } from '../components/CodeBlock'
 const USE = `// copy the bridge once:  python -m webapp_shell bridge --out src/bridge
 import { getBridge } from './bridge/webapp-shell-bridge.js'
 
@@ -45,9 +46,7 @@ export function ForFrontend() {
         </li>
       </ul>
       <h2>Using the bridge</h2>
-      <pre>
-        <code>{USE}</code>
-      </pre>
+      <CodeBlock code={USE} language={Language.TypeScript} />
       <p>
         <code>bridge.kind</code> is <code>qt</code>, <code>pywebview</code> or <code>browser</code>. Every
         function returns a promise. A shell error rejects with <code>NativeCallError</code>, whose message is
@@ -60,9 +59,7 @@ export function ForFrontend() {
         boot colours do nothing, and <code>canPickPaths</code> is false. Your own functions have no stand-in
         unless you give one:
       </p>
-      <pre>
-        <code>{FALLBACKS}</code>
-      </pre>
+      <CodeBlock code={FALLBACKS} language={Language.TypeScript} />
       <h2>What you must not assume</h2>
       <ul>
         <li>A file chosen in a dialog is a path on the user's disk. Only the backend can read it.</li>

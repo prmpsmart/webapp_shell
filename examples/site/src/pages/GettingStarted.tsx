@@ -1,3 +1,4 @@
+import { CodeBlock, Language } from '../components/CodeBlock'
 const INSTALL = `pip install webapp-shell            # pywebview window, built in
 pip install "webapp-shell[qt]"       # Qt window as well
 pip install "webapp-shell[backend]"  # Starlette helpers for the backend contract`
@@ -25,17 +26,13 @@ export function GettingStarted() {
       <h1>Getting started</h1>
       <p className="lead">Python 3.13 or newer. A backend, a compiled frontend and about fifteen lines.</p>
       <h2>Install</h2>
-      <pre>
-        <code>{INSTALL}</code>
-      </pre>
+      <CodeBlock code={INSTALL} language={Language.Shell} />
       <h2>The launcher</h2>
       <p>
         The launcher describes the program once. <code>run(config)</code> gives it the command line: the
         window toolkit, the backend, the splash and the checks.
       </p>
-      <pre>
-        <code>{LAUNCHER}</code>
-      </pre>
+      <CodeBlock code={LAUNCHER} language={Language.Python} />
       <p>
         <code>examples/minimal</code> in the repository is this, complete and runnable.
       </p>

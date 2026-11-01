@@ -140,3 +140,13 @@ def test_the_security_page_states_what_the_library_really_does():
     assert all(f"<code>{scheme}</code>" in page for scheme in OsActions.ALLOWED_URL_SCHEMES)
     assert ShellConfig.__dataclass_fields__["host"].default == "127.0.0.1" and "127.0.0.1" in page
     assert WireProtocol.for_slug("x").ws_close_unauthorized == 4401 and "4401" in page
+
+
+def test_the_committed_build_colours_the_code():
+    """Code blocks are highlighted (Python, TypeScript, shell): the bundle carries the highlighter, the CSS the colours."""
+    assets = SITE / "frontend" / "dist" / "assets"
+    bundle = "".join(path.read_text() for path in assets.glob("*.js"))
+    styles = "".join(path.read_text() for path in assets.glob("*.css"))
+    assert "hljs-" in bundle and "language-" in bundle
+    for token in ("hljs-keyword", "hljs-string", "hljs-comment", "hljs-title"):
+        assert token in styles

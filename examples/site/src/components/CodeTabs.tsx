@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CodeBlock, languageOf } from './CodeBlock'
 
 export enum Layer {
   Frontend = 'Frontend',
@@ -32,9 +33,7 @@ export function CodeTabs({ snippets }: { snippets: Snippet[] }) {
         ))}
         <span className="code-file">{snippet.file}</span>
       </div>
-      <pre>
-        <code>{snippet.code}</code>
-      </pre>
+      <CodeBlock code={snippet.code} language={languageOf(snippet.file)} />
     </div>
   )
 }

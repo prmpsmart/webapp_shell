@@ -5,6 +5,9 @@ in one config object; the library starts the backend, waits until it is healthy,
 (pywebview, or Qt on request) and gives the page a small set of native functions (file and folder dialogs, reveal in the
 file manager, open a link, zoom).
 
+> Documentation: <https://prmpsmart.github.io/webapp_shell>. The same site is what `examples/site` opens in the
+> library's own window, where each feature's demonstration button does the real thing.
+>
 > By Miracle Apata ([@prmpsmart](https://github.com/prmpsmart)). MIT licence.
 
 ```python

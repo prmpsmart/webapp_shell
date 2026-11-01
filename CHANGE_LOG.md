@@ -21,3 +21,4 @@ The first version (not yet published). What it holds:
 - Name checked free on PyPI on 1 November 2026. Checked: Starlette 0.40 and 1.10, pywebview 6.2 and 6.2.1; a clean install of the built wheel runs the example.
 - Plainer start-up errors: a backend that stops while starting reports its exit code; one that never answers names the health path and the seconds waited.
 - On Windows, a missing WebView2 runtime is found before any window opens and reported in a message box with the download page (`webapp_shell.webview2`).
+- The example site colours every code block (Python, TypeScript, shell) with highlight.js; the README links to the documentation site.

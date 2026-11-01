@@ -286,3 +286,54 @@ textarea {
   color: var(--text);
   font: inherit;
 }
+
+/* Syntax colours: code always sits on the dark code background, in both themes. */
+.hljs-comment,
+.hljs-quote {
+  color: #7f8aa6;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag {
+  color: #c792ea;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #a5e075;
+}
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+  color: #f5a97f;
+}
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: #82aaff;
+}
+.hljs-title.class_,
+.hljs-type,
+.hljs-built_in {
+  color: #ffcb6b;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-property,
+.hljs-variable,
+.hljs-params {
+  color: #e4e9f5;
+}
+.hljs-meta,
+.hljs-subst,
+.hljs-deletion {
+  color: #89ddff;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
