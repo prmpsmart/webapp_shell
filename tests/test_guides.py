@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 import webapp_shell
-from webapp_shell import contract
+from webapp_shell import contract, freezing
 from webapp_shell.contract import guard
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,6 +14,7 @@ PUBLIC = {
     "webapp_shell": set(webapp_shell.__all__),
     "webapp_shell.contract": set(contract.__all__),
     "webapp_shell.contract.guard": set(guard.__all__),
+    "webapp_shell.freezing": set(freezing.__all__),
 }
 
 

@@ -1,4 +1,5 @@
-"""`python -m webapp_shell bridge --out DIR`: copies the page-side bridge (one `.js` file and its `.d.ts`) into a frontend."""
+"""`python -m webapp_shell bridge --out DIR` copies the page-side bridge (one `.js` file and its `.d.ts`) into a frontend;
+`messages` prints the shell's sentences as JSON; `freeze PLAN` freezes a program with PyInstaller."""
 
 import argparse
 import json
@@ -33,7 +34,13 @@ def main(argv: list[str] | None = None) -> int:
     commands.add_parser(
         "messages", help="print the sentences the shell shows, as JSON, for a frontend's translation files"
     )
-    args = parser.parse_args(sys.argv[1:] if argv is None else argv)
+    commands.add_parser("freeze", help="freeze a program with PyInstaller (webapp_shell.freezing); see freeze --help")
+    arguments = sys.argv[1:] if argv is None else argv
+    if arguments[:1] == ["freeze"]:  # its own arguments: the plan, the shells, the folders
+        from .freezing.builder import main as freeze
+
+        return freeze(arguments[1:])
+    args = parser.parse_args(arguments)
     if args.command == "bridge":
         for path in copy_bridge(args.out):
             print(path)

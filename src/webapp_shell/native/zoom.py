@@ -15,14 +15,7 @@ from collections.abc import Callable
 
 import webview
 
-MIN_ZOOM = 0.5
-MAX_ZOOM = 3.0
 MAIN_THREAD_WAIT = 2.0  # seconds to wait for the system's UI thread
-
-
-def clamp(value: float) -> float:
-    """A usable zoom factor: the value, kept between the smallest and the largest the shells allow."""
-    return min(MAX_ZOOM, max(MIN_ZOOM, value))
 
 
 class ZoomSurface(ABC):

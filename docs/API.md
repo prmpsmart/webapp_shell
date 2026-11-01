@@ -7,7 +7,7 @@ tune the shell (`webapp_shell.contract.guard`, `standard_functions`, `build_pars
 Nothing else is promised: a module or name that is not listed here can change in any release, even though it can be
 imported.
 
-Public names: 32.
+Public names: 34.
 
 ## `webapp_shell.backend`
 
@@ -105,6 +105,25 @@ Decides whether a candidate is the launch token, and whether a request comes fro
   - `OPEN_URL`
   - `SET_BOOT_COLORS`
   - `SET_ZOOM`
+
+## `webapp_shell.freezing.plan`
+
+What a project says about its frozen build. The rest (the entry file, what each shell leaves out, the checks of the finished folder) belongs to the library.
+
+- `class DataFolder` — A folder of the project that goes into the build as data (the compiled frontend, files the backend reads).
+  - `source: Path`
+  - `target: str`
+- `class FreezePlan`
+  - `product: str`
+  - `config: str`
+  - `packages: tuple[str, ...]`
+  - `data_folders: tuple[DataFolder, ...]`
+  - `required: tuple[str, ...]`
+  - `collect_all: tuple[str, ...]`
+  - `runtime_hooks: tuple[Path, ...]`
+  - `excludes: tuple[str, ...]`
+  - `icon: Path | None`
+  - `def load(cls, reference: str) -> 'FreezePlan'`
 
 ## `webapp_shell.identity`
 

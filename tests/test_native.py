@@ -66,7 +66,7 @@ def test_shell_kinds_match_the_registry():
 
 
 def test_zoom_factors_are_limited():
-    from webapp_shell.native.zoom import MAX_ZOOM, MIN_ZOOM, clamp
+    from webapp_shell.native.zoom_range import MAX_ZOOM, MIN_ZOOM, clamp
 
     assert clamp(1.25) == 1.25 and clamp(1) == 1.0
     assert clamp(99) == MAX_ZOOM and clamp(0.01) == MIN_ZOOM

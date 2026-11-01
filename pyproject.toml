@@ -36,7 +36,8 @@ Changelog = "https://github.com/prmpsmart/webapp_shell/blob/main/CHANGE_LOG.md"
 [project.optional-dependencies]
 qt = ["PySide6>=6.9"]
 backend = ["starlette>=0.40"]
-dev = ["pytest>=8", "ruff>=0.5", "PySide6>=6.9", "starlette>=0.40", "uvicorn>=0.30"]
+freeze = ["pyinstaller>=6"]
+dev = ["pytest>=8", "ruff>=0.5", "PySide6>=6.9", "starlette>=0.40", "uvicorn>=0.30", "pyinstaller>=6"]
 
 [tool.hatch.build.targets.sdist]
 include = ["src", "tests", "docs", "tools", "examples", "README.md", "LICENSE", "CHANGE_LOG.md", "change_logs", "pyproject.toml"]
@@ -47,7 +48,8 @@ packages = ["src/webapp_shell"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q -m 'not freeze'"  # the freeze test runs PyInstaller: `python -m pytest -m freeze`
+markers = ["freeze: freezes the minimal example with PyInstaller (slow)"]
 pythonpath = ["src", "tests"]
 
 [tool.ruff]

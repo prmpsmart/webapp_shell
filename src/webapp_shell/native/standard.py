@@ -8,7 +8,7 @@ from ..preferences import BootColors
 from .filters import FileFilter
 from .registry import NativeCallable, NativeFunction
 from .window import NativeContext
-from .zoom import clamp
+from .zoom_range import clamp
 
 
 @dataclass(frozen=True)

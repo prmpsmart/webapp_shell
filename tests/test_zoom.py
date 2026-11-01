@@ -1,4 +1,5 @@
-from webapp_shell.native.zoom import MAX_ZOOM, MIN_ZOOM, MacZoom, WebviewZoom, ZoomSurface, clamp
+from webapp_shell.native.zoom import MacZoom, WebviewZoom, ZoomSurface
+from webapp_shell.native.zoom_range import MAX_ZOOM, MIN_ZOOM, clamp
 
 
 class FakeWebView:
