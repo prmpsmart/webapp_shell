@@ -39,5 +39,5 @@ class BuildVerifier:
         for path in self.folder.rglob("*"):
             parts = {part.lower().split(".")[0] for part in path.relative_to(self.folder).parts}
             if parts & names:
-                found.append(Finding(str(path.relative_to(self.folder)), "belongs to the other shell"))
+                found.append(Finding(path.relative_to(self.folder).as_posix(), "belongs to the other shell"))
         return found
