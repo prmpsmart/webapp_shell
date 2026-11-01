@@ -13,7 +13,7 @@ EXPORTED = set(webapp_shell.__all__) | set(contract.__all__)
 
 
 def python_blocks(path: Path) -> list[str]:
-    return re.findall(r"```python\n(.*?)```", path.read_text(), flags=re.DOTALL)
+    return re.findall(r"```python\n(.*?)```", path.read_text(encoding="utf-8"), flags=re.DOTALL)
 
 
 @pytest.mark.parametrize("path", GUIDES, ids=lambda path: path.name)

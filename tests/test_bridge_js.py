@@ -35,13 +35,13 @@ console.log(JSON.stringify(result))
 
 
 def test_the_js_list_of_standard_methods_equals_the_python_one():
-    text = BRIDGE.read_text()
+    text = BRIDGE.read_text(encoding="utf-8")
     listed = re.search(r"STANDARD_METHODS = \[(.*?)\]", text, re.S).group(1)
     assert re.findall(r"'(\w+)'", listed) == [method.value for method in NativeMethod]
 
 
 def test_the_typings_describe_every_standard_method():
-    typings = BRIDGE.with_suffix(".d.ts").read_text()
+    typings = BRIDGE.with_suffix(".d.ts").read_text(encoding="utf-8")
     for method in NativeMethod:
         assert re.search(rf"\b{method.value}\(", typings), method.value
 
@@ -124,6 +124,8 @@ def test_in_a_plain_browser_paths_are_null_links_open_and_own_functions_use_thei
 def test_the_command_copies_the_bridge_into_a_frontend(tmp_path, capsys):
     assert main(["bridge", "--out", str(tmp_path / "src" / "native")]) == 0
     assert sorted(p.name for p in (tmp_path / "src" / "native").iterdir()) == sorted(BRIDGE_FILES)
-    assert (tmp_path / "src" / "native" / BRIDGE_FILES[0]).read_text() == BRIDGE.read_text()
+    assert (tmp_path / "src" / "native" / BRIDGE_FILES[0]).read_text(encoding="utf-8") == BRIDGE.read_text(
+        encoding="utf-8"
+    )
     assert BRIDGE_FILES[0] in capsys.readouterr().out
     assert [p.name for p in copy_bridge(tmp_path / "again")] == list(BRIDGE_FILES)

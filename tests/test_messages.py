@@ -43,7 +43,7 @@ def test_the_watchdog_gives_up_in_the_projects_words():
         said.append,
         "Notas",
         ShellMessages(backend_gave_up="Cierre {name}."),
-        max_restarts=0,  # type: ignore[arg-type]
+        max_restarts=0,
     )
     watchdog.check()
     assert said == ["Cierre Notas."]
@@ -64,7 +64,7 @@ def test_the_command_prints_the_same_catalogue():
 
 
 def test_the_translating_guide_shows_the_real_catalogue():
-    guide = (ROOT / "docs" / "TRANSLATING.md").read_text()
+    guide = (ROOT / "docs" / "TRANSLATING.md").read_text(encoding="utf-8")
     shown = json.loads(guide.split("```json\n")[1].split("```")[0])
     assert shown == ShellMessages().catalogue()
     assert all(f"`{key}`" in guide for key in MessageKey)

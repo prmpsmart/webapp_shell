@@ -21,7 +21,7 @@ only because it has no underscore: the owner decides which of those stay public 
 
 def exported_names(path: Path) -> set[str]:
     """The names in the `__all__` of one `__init__.py`."""
-    for node in ast.parse(path.read_text()).body:
+    for node in ast.parse(path.read_text(encoding="utf-8")).body:
         if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets):
             return set(ast.literal_eval(node.value))
     return set()
@@ -71,7 +71,7 @@ def describe_class(node: ast.ClassDef) -> list[str]:
 
 def describe_module(path: Path, exported: set[str]) -> list[str]:
     lines: list[str] = []
-    for node in ast.parse(path.read_text()).body:
+    for node in ast.parse(path.read_text(encoding="utf-8")).body:
         if isinstance(node, ast.ClassDef) and is_public(node.name):
             block = describe_class(node)
         elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef) and is_public(node.name):
@@ -100,7 +100,7 @@ def render() -> str:
         module = ".".join(("webapp_shell", *relative.parts)).removesuffix(".__init__")
         body = describe_module(path, exported)
         if body:
-            summary = first_line(ast.parse(path.read_text()))
+            summary = first_line(ast.parse(path.read_text(encoding="utf-8")))
             intro = f"{summary}\n\n" if summary else ""
             out.append(f"\n## `{module}`\n\n{intro}" + "\n".join(body) + "\n")
     return "".join(out).rstrip("\n") + "\n"
@@ -109,8 +109,8 @@ def render() -> str:
 def main() -> int:
     text = render()
     if "--check" in sys.argv:
-        return 0 if TARGET.exists() and TARGET.read_text() == text else 1
-    TARGET.write_text(text)
+        return 0 if TARGET.exists() and TARGET.read_text(encoding="utf-8") == text else 1
+    TARGET.write_text(text, encoding="utf-8", newline="\n")
     print(TARGET)
     return 0
 

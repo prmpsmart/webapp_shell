@@ -36,7 +36,9 @@ def load_launcher():
 
 def test_the_sites_bridge_copy_is_the_one_in_the_package():
     for name in ("webapp-shell-bridge.js", "webapp-shell-bridge.d.ts"):
-        assert (SITE / "src" / "bridge" / name).read_text() == (BRIDGE / name).read_text(), name
+        assert (SITE / "src" / "bridge" / name).read_text(encoding="utf-8") == (BRIDGE / name).read_text(
+            encoding="utf-8"
+        ), name
 
 
 def test_the_backend_is_started_by_the_shell_and_follows_the_contract(site_path, tmp_path):
@@ -59,7 +61,7 @@ def test_the_backend_is_started_by_the_shell_and_follows_the_contract(site_path,
         target = tmp_path / "saved.txt"
         saved = httpx.post(f"{process.base_url}/api/save", json={"path": str(target), "text": "abc"}, headers=headers)
         assert saved.json() == {"bytes": 3}
-        assert target.read_text() == "abc"
+        assert target.read_text(encoding="utf-8") == "abc"
         missing = tmp_path / "no-such-folder" / "x.txt"
         folder = httpx.get(f"{process.base_url}/api/folder", params={"path": str(tmp_path)}, headers=headers).json()
         assert folder["count"] >= 2 and "note.txt" in folder["first"]
@@ -81,7 +83,7 @@ def test_the_backend_is_started_by_the_shell_and_follows_the_contract(site_path,
 
 
 def test_the_getting_started_launcher_sample_builds_a_config(tmp_path):
-    page = (SITE / "src" / "pages" / "GettingStarted.tsx").read_text()
+    page = (SITE / "src" / "pages" / "GettingStarted.tsx").read_text(encoding="utf-8")
     sample = re.search(r"const LAUNCHER = `(.*?)`", page, re.S).group(1)
     sample = sample.replace("raise SystemExit(run(config))", "")  # building it is the test; running it opens a window
     scope = {"__file__": str(tmp_path / "launch.py")}
@@ -92,7 +94,7 @@ def test_the_getting_started_launcher_sample_builds_a_config(tmp_path):
 
 def test_the_committed_build_contains_the_code_it_shows():
     """A stale `dist` would show code that is no longer the code: rebuild with `npm run build` in examples/site."""
-    bundle = "".join(path.read_text() for path in (SITE / "frontend" / "dist" / "assets").glob("*.js"))
+    bundle = "".join(path.read_text(encoding="utf-8") for path in (SITE / "frontend" / "dist" / "assets").glob("*.js"))
     assert "async def describe" in bundle
     for shown in ("chooseAndDescribe", "chooseAndSave", "chooseAndReveal", "openInBrowser", "applyZoom"):
         assert shown in bundle, shown
@@ -118,7 +120,7 @@ def test_the_site_renders_in_the_qt_shell(tmp_path):
 
 
 def test_the_sites_own_native_functions_run_through_the_registry(site_path):
-    from native_functions import NATIVE_FUNCTIONS
+    from native_functions import NATIVE_FUNCTIONS  # type: ignore
     from webapp_shell.native.registry import NativeRegistry
 
     registry = NativeRegistry(NATIVE_FUNCTIONS)
@@ -137,7 +139,7 @@ def test_the_security_page_states_what_the_library_really_does():
     from webapp_shell.native.os_actions import OsActions
     from webapp_shell.protocol import WireProtocol
 
-    page = (SITE / "src" / "pages" / "Security.tsx").read_text()
+    page = (SITE / "src" / "pages" / "Security.tsx").read_text(encoding="utf-8")
     assert {"http", "https", "mailto"} == OsActions.ALLOWED_URL_SCHEMES
     assert all(f"<code>{scheme}</code>" in page for scheme in OsActions.ALLOWED_URL_SCHEMES)
     assert ShellConfig.__dataclass_fields__["host"].default == "127.0.0.1" and "127.0.0.1" in page
@@ -147,8 +149,8 @@ def test_the_security_page_states_what_the_library_really_does():
 def test_the_committed_build_colours_the_code():
     """Code blocks are highlighted (Python, TypeScript, shell): the bundle carries the highlighter, the CSS the colours."""
     assets = SITE / "frontend" / "dist" / "assets"
-    bundle = "".join(path.read_text() for path in assets.glob("*.js"))
-    styles = "".join(path.read_text() for path in assets.glob("*.css"))
+    bundle = "".join(path.read_text(encoding="utf-8") for path in assets.glob("*.js"))
+    styles = "".join(path.read_text(encoding="utf-8") for path in assets.glob("*.css"))
     assert "hljs-" in bundle and "language-" in bundle
     for token in ("hljs-keyword", "hljs-string", "hljs-comment", "hljs-title"):
         assert token in styles
@@ -157,7 +159,7 @@ def test_the_committed_build_colours_the_code():
 def test_the_committed_build_has_the_copy_button_and_the_browser_alternatives():
     """A plain browser (the Pages copy) gets the browser's own pickers instead of a dead button."""
     assets = SITE / "frontend" / "dist" / "assets"
-    bundle = "".join(path.read_text() for path in assets.glob("*.js"))
+    bundle = "".join(path.read_text(encoding="utf-8") for path in assets.glob("*.js"))
     for needle in ("Copy the code", "showOpenFilePicker", "showDirectoryPicker", "showSaveFilePicker", "theme-color"):
         assert needle in bundle, needle
 
@@ -165,6 +167,6 @@ def test_the_committed_build_has_the_copy_button_and_the_browser_alternatives():
 def test_the_token_page_draws_the_token_route_not_the_file_route():
     """The route diagram belongs to each page: the token page shows how the token travels."""
     assets = SITE / "frontend" / "dist" / "assets"
-    bundle = "".join(path.read_text() for path in assets.glob("*.js"))
+    bundle = "".join(path.read_text(encoding="utf-8") for path in assets.glob("*.js"))
     for needle in ("environment variable", "launch URL, once", "cookie on every call", "how the token is handed over"):
         assert needle in bundle, needle

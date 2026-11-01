@@ -8,11 +8,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def project_version() -> str:
-    return tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+    return tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
 
 
 def test_the_root_change_log_is_about_the_current_version():
-    title = (ROOT / "CHANGE_LOG.md").read_text().splitlines()[0]
+    title = (ROOT / "CHANGE_LOG.md").read_text(encoding="utf-8").splitlines()[0]
     assert title == f"# {project_version()}"
 
 

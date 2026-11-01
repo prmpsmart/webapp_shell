@@ -12,5 +12,5 @@ def test_the_api_listing_is_current():
 
 
 def test_every_exported_name_is_marked_in_the_listing():
-    listing = (ROOT / "docs" / "API.md").read_text()
+    listing = (ROOT / "docs" / "API.md").read_text(encoding="utf-8")
     assert listing.count("**(exported)**") == int(listing.split("Exported names: ")[1].split(".")[0])

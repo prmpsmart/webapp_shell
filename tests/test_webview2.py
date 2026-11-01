@@ -1,3 +1,7 @@
+import sys
+
+import pytest
+
 from webapp_shell.messages import ShellMessages
 from webapp_shell.webview2 import (
     DOWNLOAD_URL,
@@ -42,6 +46,7 @@ def test_nothing_is_said_when_the_runtime_is_there():
     assert check.problem("Acme Notes", ShellMessages()) is None
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows has a registry to read")
 def test_reading_the_registry_off_windows_finds_nothing():
     from webapp_shell.webview2 import read_registry_version
 

@@ -1,3 +1,4 @@
+import os
 import sys
 
 from webapp_shell.installation import Installation, ensure_standard_streams
@@ -22,4 +23,4 @@ def test_a_windowed_program_gets_streams_that_discard_text(monkeypatch):
     monkeypatch.setattr(sys, "stderr", None)
     ensure_standard_streams()
     print("nobody reads this")
-    assert sys.stdout.isatty() is False and sys.stderr is not None
+    assert sys.stdout.name == os.devnull and sys.stderr is not None  # `nul` says isatty on Windows

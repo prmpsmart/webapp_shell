@@ -26,7 +26,7 @@ def example_path(monkeypatch):
 def example_settings(example_path, tmp_path):
     from dataclasses import replace
 
-    import app  # the example's launcher
+    import app  # the example's launcher.  # type: ignore
 
     identity = replace(app.config.identity, storage_dir=tmp_path)
     return Settings.of(replace(app.config, identity=identity))
@@ -34,7 +34,9 @@ def example_settings(example_path, tmp_path):
 
 def test_the_examples_bridge_copy_is_the_one_in_the_package():
     for name in ("webapp-shell-bridge.js", "webapp-shell-bridge.d.ts"):
-        assert (EXAMPLE / "frontend" / "dist" / name).read_text() == (BRIDGE / name).read_text(), name
+        assert (EXAMPLE / "frontend" / "dist" / name).read_text(encoding="utf-8") == (BRIDGE / name).read_text(
+            encoding="utf-8"
+        ), name
 
 
 def test_the_backend_is_started_by_the_shell_and_follows_the_contract(example_settings, tmp_path):
