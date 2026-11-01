@@ -28,7 +28,7 @@ Decided 31 October 2026: the page talks only to the shell and the backend never 
 - [ ] **Badges** in `README.md` once CI has run; a short `CONTRIBUTING.md` if wanted.
 - [ ] **GitHub repository** `prmpsmart/webapp_shell` (public), push the first commit; enable Pages (source: GitHub Actions); the workflows are in `.github/workflows/` and have never run.
 - [ ] **Build and check:** done locally (wheel and sdist pass `twine check`, wheel holds only `webapp_shell`); repeat in CI.
-- [ ] **Accounts:** PyPI and TestPyPI, with two-factor authentication; add the trusted publisher (repo `prmpsmart/webapp_shell`, workflow `release.yml`, environment `pypi`) on both.
+- [ ] **Accounts:** PyPI and TestPyPI, with two-factor authentication; add the trusted publisher on both (repo `prmpsmart/webapp_shell`, workflow `release.yml`; environment `testpypi` on TestPyPI, `pypi` on PyPI); create both environments in the GitHub repo settings.
 - [ ] **Dry run on TestPyPI**, install from it, run the example.
 - [ ] **Release `0.1`:** tag `v0.1`, publish to PyPI, check `pip install webapp-shell` in a clean environment.
 
