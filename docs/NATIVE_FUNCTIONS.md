@@ -9,7 +9,7 @@ names). They are always there, in both window toolkits, with the same names and 
 
 ## Calling from the page
 
-```
+```sh
 python -m webapp_shell bridge --out src/
 ```
 

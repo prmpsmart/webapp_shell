@@ -85,7 +85,7 @@ def describe_module(path: Path, exported: set[str]) -> list[str]:
             if isinstance(node, ast.TypeAlias) and isinstance(node.name, ast.Name)
             else getattr(node, "name", "")
         )
-        block[0] += "  **(exported)**" if name in exported else ""
+        block[0] += " **(exported)**" if name in exported else ""
         lines.extend(block)
     return lines
 
@@ -101,8 +101,9 @@ def render() -> str:
         body = describe_module(path, exported)
         if body:
             summary = first_line(ast.parse(path.read_text()))
-            out.append(f"\n## `{module}`\n\n{summary}\n\n" + "\n".join(body) + "\n")
-    return "".join(out)
+            intro = f"{summary}\n\n" if summary else ""
+            out.append(f"\n## `{module}`\n\n{intro}" + "\n".join(body) + "\n")
+    return "".join(out).rstrip("\n") + "\n"
 
 
 def main() -> int:

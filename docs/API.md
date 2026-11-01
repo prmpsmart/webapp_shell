@@ -11,11 +11,11 @@ Exported names: 24.
 
 How a project's backend is started: a Python module run as `python -m <module>` (or, in a frozen program, by the program running itself).
 
-- `class CliFlag` — A command-line switch the project adds to its program (`--sandbox`). When given, the backend gets `passes`.  **(exported)**
+- `class CliFlag` — A command-line switch the project adds to its program (`--sandbox`). When given, the backend gets `passes`. **(exported)**
   - `name: str`
   - `help: str`
   - `passes: tuple[str, ...]`
-- `class BackendSpec`  **(exported)**
+- `class BackendSpec` **(exported)**
   - `module: str`
   - `wire: WireProtocol`
   - `frontend_dist: Path`
@@ -49,13 +49,13 @@ The command line every project gets: `<program> [webview|qt] [--smoke] [--splash
 - `def build_parser(config: ShellConfig) -> argparse.ArgumentParser`
 - `def run_backend(config: ShellConfig, argv: list[str]) -> int` — A frozen program starts its backend by running itself with `Installation.RUN_BACKEND`.
 - `def check_libraries(config: ShellConfig) -> int`
-- `def run(config: ShellConfig, argv: list[str] | None=None, installation: Installation | None=None) -> int` — The entry point of a project's program: its launcher builds a `ShellConfig` and calls this.  **(exported)**
+- `def run(config: ShellConfig, argv: list[str] | None=None, installation: Installation | None=None) -> int` — The entry point of a project's program: its launcher builds a `ShellConfig` and calls this. **(exported)**
 
 ## `webapp_shell.config`
 
 The one object a project gives the library.
 
-- `class ShellConfig`  **(exported)**
+- `class ShellConfig` **(exported)**
   - `identity: AppIdentity`
   - `backend: BackendSpec`
   - `source_root: Path`
@@ -85,35 +85,33 @@ Access control for a Starlette or FastAPI backend: the launch token, from a head
 
 The command line the shell starts a backend with, read by the backend: the port, the compiled frontend, the preferences file and the token. The argument names come from the same `BackendSpec` the shell builds the command from, so the two cannot drift.
 
-- `class LaunchArguments`  **(exported)**
+- `class LaunchArguments` **(exported)**
   - `port: int`
   - `token: str`
   - `frontend: Path | None`
   - `preferences_file: Path | None`
   - `host: str`
-- `def add_launch_arguments(parser: argparse.ArgumentParser, backend: BackendSpec) -> None` — Adds the standard arguments to a backend's parser. Read them back with `LaunchArguments.of(args, ...)`.  **(exported)**
-- `def read_launch_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace, wire: WireProtocol) -> LaunchArguments` — Checks the token is there (the parser reports the error) and gathers the standard arguments.  **(exported)**
+- `def add_launch_arguments(parser: argparse.ArgumentParser, backend: BackendSpec) -> None` — Adds the standard arguments to a backend's parser. Read them back with `LaunchArguments.of(args, ...)`. **(exported)**
+- `def read_launch_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace, wire: WireProtocol) -> LaunchArguments` — Checks the token is there (the parser reports the error) and gathers the standard arguments. **(exported)**
 
 ## `webapp_shell.contract.tokens`
 
 Decides whether a candidate is the launch token, and whether a request comes from the app's own page. No HTTP framework code here.
 
-- `class TokenValidator`  **(exported)**
+- `class TokenValidator` **(exported)**
   - `def __init__(self, token: str, wire: WireProtocol)`
   - `property token(self) -> str`
   - `def is_valid(self, candidate: str | None) -> bool`
   - `def is_valid_connection(self, headers: Mapping[str, str], cookies: Mapping[str, str], query: Mapping[str, str]) -> bool`
-- `class OriginPolicy` — A browser tells which page made a request in `Origin`. Cookies are shared by every port of a host, so another program's page on 127.0.0.1 would otherwise be allowed to call this one: only the app's own page is.  **(exported)**
+- `class OriginPolicy` — A browser tells which page made a request in `Origin`. Cookies are shared by every port of a host, so another program's page on 127.0.0.1 would otherwise be allowed to call this one: only the app's own page is. **(exported)**
   - `def allows(self, origin: str | None, host: str | None) -> bool`
 
 ## `webapp_shell.enums`
 
-
-
-- `class ShellKind(StrEnum)` — The desktop shells. The value is what the command line and the run scripts use.  **(exported)**
+- `class ShellKind(StrEnum)` — The desktop shells. The value is what the command line and the run scripts use. **(exported)**
   - `QT`
   - `WEBVIEW`
-- `class NativeMethod(StrEnum)` — The native functions a page may call (02-architecture.md). The value is the name on the wire, in both shells.  **(exported)**
+- `class NativeMethod(StrEnum)` — The native functions a page may call (02-architecture.md). The value is the name on the wire, in both shells. **(exported)**
   - `PICK_FOLDER`
   - `PICK_FILE`
   - `SAVE_AS`
@@ -126,7 +124,7 @@ Decides whether a candidate is the launch token, and whether a request comes fro
 
 Who the program is: the one place a project says its name, where it keeps things and how its opening looks.
 
-- `class AppIdentity` — What the shell shows and stores for one program. Nothing else in the library names the program.  **(exported)**
+- `class AppIdentity` — What the shell shows and stores for one program. Nothing else in the library names the program. **(exported)**
   - `name: str`
   - `slug: str`
   - `storage_dir: Path`
@@ -157,8 +155,8 @@ Where the program lives and how its backend is started: from the source tree, or
 
 What JSON can carry. Everything that crosses between the page and Python is one of these, never a bare `dict`.
 
-- `type JsonValue = str | int | float | bool | None | list[JsonValue] | dict[str, JsonValue]`  **(exported)**
-- `type JsonObject = dict[str, JsonValue]`  **(exported)**
+- `type JsonValue = str | int | float | bool | list[JsonValue] | dict[str, JsonValue] | None` **(exported)**
+- `type JsonObject = dict[str, JsonValue]` **(exported)**
 
 ## `webapp_shell.library_check`
 
@@ -175,13 +173,13 @@ Imports every third-party library a project lists. Heavy libraries load lazily, 
 
 The few sentences the shell shows itself (in the splash page's error, and in what it prints), as one catalogue.
 
-- `class MessageKey(StrEnum)` — The name of each sentence. The member name, lower-cased, is the field of `ShellMessages`; the value is the key in the JSON catalogue.  **(exported)**
+- `class MessageKey(StrEnum)` — The name of each sentence. The member name, lower-cased, is the field of `ShellMessages`; the value is the key in the JSON catalogue. **(exported)**
   - `FRONTEND_MISSING`
   - `BACKEND_NOT_STARTED`
   - `VERSION_NOT_OBJECT`
   - `BACKEND_GAVE_UP`
   - `LIBRARIES_PRESENT`
-- `class ShellMessages` — Every sentence, with its English default. `{name}` and `{path}` are filled in when the sentence is shown.  **(exported)**
+- `class ShellMessages` — Every sentence, with its English default. `{name}` and `{path}` are filled in when the sentence is shown. **(exported)**
   - `frontend_missing: str`
   - `backend_not_started: str`
   - `version_not_object: str`
@@ -204,7 +202,7 @@ Turns the list of JSON values a page sent into the typed arguments of a native f
 
 The error a native function raises to refuse a call in words the page may show.
 
-- `class NativeError(Exception)` — Raised by a handler to refuse a call in words the page may show.  **(exported)**
+- `class NativeError(Exception)` — Raised by a handler to refuse a call in words the page may show. **(exported)**
 
 ## `webapp_shell.native.filters`
 
@@ -250,11 +248,11 @@ The native bridge of the Qt shell: a QObject published to the page through QWebC
 
 The native functions a page may call: a name, typed arguments, a handler, and one place that runs them for both toolkits.
 
-- `class NoArguments` — The arguments of a function that takes none.  **(exported)**
-- `class NativeCallable(Protocol)` — What the registry stores: any `NativeFunction`, whatever its arguments are.  **(exported)**
+- `class NoArguments` — The arguments of a function that takes none. **(exported)**
+- `class NativeCallable(Protocol)` — What the registry stores: any `NativeFunction`, whatever its arguments are. **(exported)**
   - `property name(self) -> str`
   - `def run(self, context: NativeContext, values: list[JsonValue]) -> JsonValue`
-- `class NativeFunction` — A function the page can call by `name`. `arguments` is a dataclass (see `native.arguments`); the handler is called as `handler(context, arguments)` and returns anything JSON can carry.  **(exported)**
+- `class NativeFunction` — A function the page can call by `name`. `arguments` is a dataclass (see `native.arguments`); the handler is called as `handler(context, arguments)` and returns anything JSON can carry. **(exported)**
   - `def __init__(self, name: str, arguments: type[A], handler: Callable[[NativeContext, A], JsonValue])`
   - `property name(self) -> str`
   - `def run(self, context: NativeContext, values: list[JsonValue]) -> JsonValue`
@@ -343,12 +341,12 @@ The application icon in the Dock. pywebview applies its `icon` option on Qt and 
 
 What a native function can use: the window it opens dialogs on, the shell's preferences and the OS actions. Each toolkit implements `NativeWindow`; the functions are written once, against it.
 
-- `class NativeWindow(ABC)` — The window of one toolkit. A dialog returns the chosen path, or None when the person cancelled.  **(exported)**
+- `class NativeWindow(ABC)` — The window of one toolkit. A dialog returns the chosen path, or None when the person cancelled. **(exported)**
   - `def pick_folder(self, start: str) -> str | None`
   - `def pick_file(self, filters: list[FileFilter], start: str) -> str | None`
   - `def save_as(self, name: str, start: str) -> str | None`
   - `def set_zoom(self, factor: float) -> bool`
-- `class NativeContext` — Handed to every native function as its first argument.  **(exported)**
+- `class NativeContext` — Handed to every native function as its first argument. **(exported)**
   - `window: NativeWindow`
   - `preferences: ShellPreferences`
   - `actions: OsActions`
@@ -376,7 +374,7 @@ Page zoom (Cmd/Ctrl +, -, 0). The page decides the factor and keeps it as an app
 What the shell itself remembers between launches: the colours of the app's opening screen, so the window and the splash start in the colours of the theme the user chose (the shell cannot read the web page's storage before the page loads).
 
 - `def is_colour(value: object) -> bool` — Only `#rrggbb` is accepted: these values are later written into HTML and CSS.
-- `class BootColors` — The three colours of the navy gradient (frontend tokens `--nav`, `--hero-a`, `--hero-b`).  **(exported)**
+- `class BootColors` — The three colours of the navy gradient (frontend tokens `--nav`, `--hero-a`, `--hero-b`). **(exported)**
   - `base: str`
   - `glow_a: str`
   - `glow_b: str`
@@ -393,7 +391,7 @@ What the shell itself remembers between launches: the colours of the app's openi
 
 The names the shell and a backend must agree on. The backend reads the same names; the library never invents them silently: `for_slug` gives a consistent default set and a project may write its own.
 
-- `class WireProtocol`  **(exported)**
+- `class WireProtocol` **(exported)**
   - `token_header: str`
   - `token_cookie: str`
   - `token_query: str`

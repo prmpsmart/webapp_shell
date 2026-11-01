@@ -6,13 +6,13 @@ dialog title that you did not write. (The native file dialogs use the operating 
 
 ## The sentences
 
-| Key (JSON)          | Field of `ShellMessages` | English default                                                          | Placeholders |
-| ------------------- | ------------------------ | ------------------------------------------------------------------------ | ------------ |
-| `frontendMissing`   | `frontend_missing`       | the compiled frontend is missing: {path}                                 | `{path}`     |
-| `backendNotStarted` | `backend_not_started`    | the backend did not start                                                |              |
-| `versionNotObject`  | `version_not_object`     | the version path did not answer with an object                           |              |
-| `backendGaveUp`     | `backend_gave_up`        | The backend stopped several times in a row. Close {name} and open it again. | `{name}`  |
-| `librariesPresent`  | `libraries_present`      | all libraries are present                                                |              |
+| Key (JSON)          | Field of `ShellMessages` | English default                                                             | Placeholders |
+| ------------------- | ------------------------ | --------------------------------------------------------------------------- | ------------ |
+| `frontendMissing`   | `frontend_missing`       | the compiled frontend is missing: {path}                                    | `{path}`     |
+| `backendNotStarted` | `backend_not_started`    | the backend did not start                                                   |              |
+| `versionNotObject`  | `version_not_object`     | the version path did not answer with an object                              |              |
+| `backendGaveUp`     | `backend_gave_up`        | The backend stopped several times in a row. Close {name} and open it again. | `{name}`     |
+| `librariesPresent`  | `libraries_present`      | all libraries are present                                                   |              |
 
 `MessageKey` (a `StrEnum`) names the keys; `ShellMessages` holds the sentences. A test keeps the two in step.
 
@@ -44,7 +44,7 @@ person can change keeps that choice in the backend or the frontend, and builds `
 
 The frontend can read the same catalogue as JSON, to put the keys beside its own translations:
 
-```
+```sh
 python -m webapp_shell messages > shell-messages.en.json
 ```
 

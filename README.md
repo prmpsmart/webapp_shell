@@ -33,7 +33,7 @@ The backend reads the same contract with the library's helpers (Starlette or Fas
 
 ```python
 parser = argparse.ArgumentParser()
-add_launch_arguments(parser, config.backend)          # --port, --frontend, --preferences-file, --token
+add_launch_arguments(parser, config.backend)  # --port, --frontend, --preferences-file, --token
 launch = read_launch_arguments(parser, parser.parse_args(), config.backend.wire)
 app.add_middleware(TokenGuard, validator=TokenValidator(launch.token, wire), wire=wire)
 ```
@@ -45,12 +45,15 @@ there; a project adds its own and the page calls them by name.
 from dataclasses import dataclass
 from webapp_shell import JsonValue, NativeContext, NativeFunction
 
+
 @dataclass(frozen=True)
-class Greeting:                   # the page's arguments, in order; each is type-checked before your code runs
+class Greeting:  # the page's arguments, in order; each is type-checked before your code runs
     who: str
+
 
 def greet(context: NativeContext, arguments: Greeting) -> JsonValue:  # context.window, .preferences, .actions
     return f"hello {arguments.who}"
+
 
 config = ShellConfig(..., native_functions=(NativeFunction("greet", Greeting, greet),))
 ```
