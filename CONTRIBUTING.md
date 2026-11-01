@@ -31,8 +31,9 @@ python -m pytest -m freeze     # freezes the minimal example with PyInstaller (s
 
 - **Typed.** `pyright` is strict on `src/` and the examples. Use dataclasses and `StrEnum`s, not dictionaries and loose
   strings; everything that crosses between the page and Python is a `JsonValue`.
-- **One job per class**, and one module imports a given toolkit (`webview`, `PySide6`, `PyInstaller`). A shell's library
-  is loaded on first use, so a Qt-only build never reaches pywebview.
+- **One job per class.** A window toolkit (`webview`, `PySide6`) is imported only by the modules of its own shell, never
+  by a shared one, so a Qt-only build never reaches pywebview (a test checks it). `PyInstaller` is imported by
+  `freezing/spec.py` alone.
 - **The public API is what is exported.** A name is public when it is in the `__all__` of `webapp_shell`,
   `webapp_shell.contract`, `webapp_shell.contract.guard` or `webapp_shell.freezing`. Adding one is a decision: it needs a
   test and a line in `CHANGE_LOG.md`. Regenerate `docs/API.md` with `python tools/api_listing.py` (a test fails when it

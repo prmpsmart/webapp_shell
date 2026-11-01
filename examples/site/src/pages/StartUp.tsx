@@ -77,9 +77,10 @@ export function StartUp() {
       <p>
         The window opens at once on a small page of the shell's own: your icon, a spinner and your{' '}
         <code>AppIdentity.boot_colors</code>, so the first thing a person sees is already your program. It
-        stays at least <code>ShellConfig.splash_seconds</code> (<code>--splash-seconds N</code> changes it for
-        one run), and until the backend answers its health path, for at most <code>startup_timeout</code>{' '}
-        seconds.
+        stays at least <code>ShellConfig.splash_seconds</code> from the start (<code>--splash-seconds N</code>{' '}
+        changes it for one run), and until the backend answers its health path. The shell waits for that
+        answer for at most <code>ShellConfig.startup_timeout</code> seconds; after that the splash becomes the
+        error page below.
       </p>
       <h2>When start-up fails</h2>
       <p>
