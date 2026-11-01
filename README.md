@@ -41,9 +41,19 @@ if __name__ == "__main__":
 The backend reads the same contract with the library's helpers (Starlette or FastAPI):
 
 ```python
+import argparse
+
+from starlette.applications import Starlette
+from webapp_shell.contract import TokenValidator, add_launch_arguments, read_launch_arguments
+from webapp_shell.contract.guard import TokenGuard
+
+wire = config.backend.wire  # the same names the shell uses
+
 parser = argparse.ArgumentParser()
 add_launch_arguments(parser, config.backend)  # --port, --frontend, --preferences-file, --token
-launch = read_launch_arguments(parser, parser.parse_args(), config.backend.wire)
+launch = read_launch_arguments(parser, parser.parse_args(), wire)
+
+app = Starlette(...)
 app.add_middleware(TokenGuard, validator=TokenValidator(launch.token, wire), wire=wire)
 ```
 
@@ -76,8 +86,12 @@ const path = await bridge.pickFile([{ name: "Excel", extensions: ["xlsx"] }]);
 const hello = await bridge.call("greet", "Ada");
 ```
 
-Install: `pip install webapp-shell` (pywebview is included); `pip install "webapp-shell[qt]"` adds Qt, and
-`pip install "webapp-shell[backend]"` adds Starlette for the token guard.
+Install: `pip install webapp-shell` (pywebview is included); the extras are `qt` (the Qt window), `backend` (Starlette,
+for the token guard) and `freeze` (PyInstaller, for the next step), for example `pip install "webapp-shell[qt,backend]"`.
+
+Freezing: describe the program in a `FreezePlan` and run `python -m webapp_shell freeze plan:PLAN qt webview`. The
+library writes the entry file and the PyInstaller spec, keeps the other window toolkit out of each build and checks the
+finished folder (see [freezing](docs/FREEZING.md)).
 
 On Windows the pywebview window needs the WebView2 runtime (present on Windows 11); `pythonnet` is installed by pywebview.
 
