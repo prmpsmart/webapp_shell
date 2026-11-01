@@ -9,9 +9,9 @@ from starlette.responses import JSONResponse
 from starlette.routing import BaseRoute, Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from webapp_shell import WireProtocol
 from webapp_shell.contract import TokenValidator
 from webapp_shell.contract.guard import TokenGuard
-from webapp_shell.protocol import WireProtocol
 
 WIRE = WireProtocol.for_slug("acme")
 VERSION = "0.1.0"

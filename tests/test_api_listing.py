@@ -11,6 +11,7 @@ def test_the_api_listing_is_current():
     assert result.returncode == 0, "docs/API.md is out of date: run python tools/api_listing.py"
 
 
-def test_every_exported_name_is_marked_in_the_listing():
+def test_every_public_name_is_in_the_listing_and_nothing_else():
     listing = (ROOT / "docs" / "API.md").read_text(encoding="utf-8")
-    assert listing.count("**(exported)**") == int(listing.split("Exported names: ")[1].split(".")[0])
+    entries = [line for line in listing.splitlines() if line.startswith("- `")]
+    assert len(entries) == int(listing.split("Public names: ")[1].split(".")[0])

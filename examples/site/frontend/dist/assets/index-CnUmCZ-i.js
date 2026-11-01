@@ -403,9 +403,9 @@ from starlette.responses import JSONResponse
 from starlette.routing import BaseRoute, Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from webapp_shell import WireProtocol
 from webapp_shell.contract import TokenValidator
 from webapp_shell.contract.guard import TokenGuard
-from webapp_shell.protocol import WireProtocol
 
 from .crash import crash
 from .describe import describe
