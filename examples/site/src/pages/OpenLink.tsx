@@ -12,7 +12,6 @@ export function OpenLink() {
     <FeaturePage
       title="Open a link"
       lead="Open an address in the user's own browser, not inside the app window."
-      usesBackend={false}
       snippets={SNIPPETS}
       demo={
         <Demo needsShell={false}>

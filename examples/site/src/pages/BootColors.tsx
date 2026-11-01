@@ -70,7 +70,6 @@ export function BootColorsPage() {
     <FeaturePage
       title="Boot colours"
       lead="The colours of the opening screen, remembered so the next start does not flash white."
-      usesBackend={false}
       snippets={SNIPPETS}
       demo={<Colors />}
     >

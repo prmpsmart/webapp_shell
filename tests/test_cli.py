@@ -39,3 +39,17 @@ def test_the_check_command_reports_through_the_exit_code(config, capsys):
     assert check_libraries(replace(config, required_libraries=("json",))) == 0
     assert run(replace(config, required_libraries=("nothing_here",)), [Installation.CHECK_LIBRARIES]) == 1
     assert "nothing_here" in capsys.readouterr().out
+
+
+def test_a_project_check_adds_its_problems_to_the_library_check(config, capsys):
+    import dataclasses
+
+    from webapp_shell import LibraryProblem
+    from webapp_shell.cli import check_libraries
+
+    def codec() -> list[LibraryProblem]:
+        return [LibraryProblem("PIL", "no support for webp")]
+
+    assert check_libraries(dataclasses.replace(config, library_checks=(codec,))) == 1
+    assert "PIL: no support for webp" in capsys.readouterr().out
+    assert check_libraries(config) == 0

@@ -58,7 +58,6 @@ export function OwnFunction() {
     <FeaturePage
       title="Your own native function"
       lead="Add a Python function to the shell and call it from the page by name."
-      usesBackend={false}
       demo={<Caller />}
       snippets={SNIPPETS}
     >

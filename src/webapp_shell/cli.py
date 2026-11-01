@@ -42,6 +42,7 @@ def run_backend(config: ShellConfig, argv: list[str]) -> int:
 
 def check_libraries(config: ShellConfig) -> int:
     problems = LibraryCheck(config.required_libraries).problems()
+    problems += [problem for check in config.library_checks for problem in check()]
     print("\n".join(map(str, problems)) or config.messages.text(MessageKey.LIBRARIES_PRESENT))
     return 1 if problems else 0
 

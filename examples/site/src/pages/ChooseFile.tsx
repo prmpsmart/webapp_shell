@@ -3,6 +3,7 @@ import backendCode from '../../docs_backend/describe.py?raw'
 import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
+import { Flow, NATIVE_PATH_FLOW } from '../components/Flow'
 import { chooseAndDescribe, type FileInfo } from '../demos/pickFile'
 import frontendCode from '../demos/pickFile.ts?raw'
 import { pathNote, pickFileInBrowser, type PickedFile } from '../browserNative'
@@ -80,7 +81,7 @@ export function ChooseFile() {
     <FeaturePage
       title="Choose a file"
       lead="A browser hides the path of a file the user picks. The shell can open the system dialog and give the page the real path."
-      usesBackend
+      flow={<Flow steps={NATIVE_PATH_FLOW} label="how a native feature travels" />}
       demo={<Chooser />}
       snippets={SNIPPETS}
     >

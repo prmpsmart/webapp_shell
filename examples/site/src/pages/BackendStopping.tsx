@@ -45,7 +45,6 @@ export function BackendStopping() {
     <FeaturePage
       title="When the backend stops"
       lead="The shell notices and starts the backend again; the page does not have to do anything."
-      usesBackend={false}
       demo={<Crasher />}
       snippets={SNIPPETS}
     >

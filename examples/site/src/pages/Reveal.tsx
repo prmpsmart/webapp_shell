@@ -11,7 +11,6 @@ export function Reveal() {
     <FeaturePage
       title="Show in the file manager"
       lead="Open the system file manager with a file selected: Finder, Explorer or the default manager."
-      usesBackend={false}
       snippets={SNIPPETS}
       demo={
         <Demo>

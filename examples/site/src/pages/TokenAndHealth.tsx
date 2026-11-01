@@ -2,8 +2,20 @@ import backendCode from '../../docs_backend/__init__.py?raw'
 import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
+import { Flow, type FlowStep } from '../components/Flow'
 import { health, versionWithToken, versionWithoutToken, type Reply } from '../demos/health'
 import frontendCode from '../demos/health.ts?raw'
+
+/** The token travels twice: to the backend in the environment, to the page in the launch URL. */
+const HAND_OVER: FlowStep[] = [
+  { title: 'shell', note: 'makes the token', carries: 'environment variable' },
+  { title: 'backend', note: 'keeps it; the health path stays open' },
+]
+const USE: FlowStep[] = [
+  { title: 'shell', note: 'opens the window', carries: 'launch URL, once' },
+  { title: 'page', note: 'receives a cookie', carries: 'cookie on every call' },
+  { title: 'backend', note: 'checks it, or answers 401' },
+]
 
 const SNIPPETS = codeFor(
   ['src/demos/health.ts', frontendCode],
@@ -22,7 +34,12 @@ export function TokenAndHealth() {
     <FeaturePage
       title="Token and health"
       lead="How the shell and the backend find each other, and why no other program can use your backend."
-      usesBackend
+      flow={
+        <>
+          <Flow steps={HAND_OVER} label="how the token is handed over" />
+          <Flow steps={USE} label="how the page uses it" />
+        </>
+      }
       snippets={SNIPPETS}
       demo={
         <Demo needsShell={false}>

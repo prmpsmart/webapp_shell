@@ -3,6 +3,7 @@ import backendCode from '../../docs_backend/save_note.py?raw'
 import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
+import { Flow, NATIVE_PATH_FLOW } from '../components/Flow'
 import { chooseAndSave } from '../demos/saveAs'
 import { saveInBrowser } from '../browserNative'
 import frontendCode from '../demos/saveAs.ts?raw'
@@ -69,7 +70,7 @@ export function SaveAs() {
     <FeaturePage
       title="Save as"
       lead="The shell asks where to save; the backend writes the file."
-      usesBackend
+      flow={<Flow steps={NATIVE_PATH_FLOW} label="how a native feature travels" />}
       demo={<Saver />}
       snippets={SNIPPETS}
     >

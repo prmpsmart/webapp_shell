@@ -62,7 +62,6 @@ export function Zoom() {
     <FeaturePage
       title="Zoom"
       lead="Scale the whole page, as a browser does with Ctrl and +."
-      usesBackend={false}
       snippets={SNIPPETS}
       demo={<Zoomer />}
     >

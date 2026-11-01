@@ -1,10 +1,12 @@
 """The one object a project gives the library."""
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
 from .backend import BackendSpec
 from .identity import AppIdentity
+from .library_check import LibraryProblem
 from .messages import ENGLISH, ShellMessages
 from .native.registry import NativeCallable
 
@@ -20,4 +22,6 @@ class ShellConfig:
     splash_seconds: float = 0.0
     native_functions: tuple[NativeCallable, ...] = ()  # the project's own, added to the standard ones
     required_libraries: tuple[str, ...] = ()  # imported by `--check-libraries` on a frozen program
+    # Checks of the project's own, run by `--check-libraries` after the imports (a codec, a data file): problems found.
+    library_checks: tuple[Callable[[], list[LibraryProblem]], ...] = ()
     messages: ShellMessages = ENGLISH  # the shell's own sentences, in the project's language

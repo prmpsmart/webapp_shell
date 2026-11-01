@@ -160,3 +160,11 @@ def test_the_committed_build_has_the_copy_button_and_the_browser_alternatives():
     bundle = "".join(path.read_text() for path in assets.glob("*.js"))
     for needle in ("Copy the code", "showOpenFilePicker", "showDirectoryPicker", "showSaveFilePicker", "theme-color"):
         assert needle in bundle, needle
+
+
+def test_the_token_page_draws_the_token_route_not_the_file_route():
+    """The route diagram belongs to each page: the token page shows how the token travels."""
+    assets = SITE / "frontend" / "dist" / "assets"
+    bundle = "".join(path.read_text() for path in assets.glob("*.js"))
+    for needle in ("environment variable", "launch URL, once", "cookie on every call", "how the token is handed over"):
+        assert needle in bundle, needle

@@ -5,7 +5,7 @@ Every public name (no leading underscore) of every module, with its signature. *
 `__all__` of `webapp_shell` or of `webapp_shell.contract`, the two places a project imports from. The rest is public
 only because it has no underscore: the owner decides which of those stay public and which are renamed with `_`.
 
-Exported names: 24.
+Exported names: 25.
 
 ## `webapp_shell.backend`
 
@@ -64,6 +64,7 @@ The one object a project gives the library.
   - `splash_seconds: float`
   - `native_functions: tuple[NativeCallable, ...]`
   - `required_libraries: tuple[str, ...]`
+  - `library_checks: tuple[Callable[[], list[LibraryProblem]], ...]`
   - `messages: ShellMessages`
 
 ## `webapp_shell.contract.guard`
@@ -162,7 +163,7 @@ What JSON can carry. Everything that crosses between the page and Python is one 
 
 Imports every third-party library a project lists. Heavy libraries load lazily, so a frozen program that lacks one would only fail when the person reaches the feature; this finds it when the program is built.
 
-- `class LibraryProblem`
+- `class LibraryProblem` **(exported)**
   - `name: str`
   - `detail: str`
 - `class LibraryCheck`

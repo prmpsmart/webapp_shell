@@ -3,6 +3,7 @@ import backendCode from '../../docs_backend/list_folder.py?raw'
 import shellCode from '../../app.py?raw'
 import { Demo, messageOf } from '../components/Demo'
 import { FeaturePage, codeFor } from '../components/FeaturePage'
+import { Flow, NATIVE_PATH_FLOW } from '../components/Flow'
 import { chooseAndList, type FolderInfo } from '../demos/pickFolder'
 import { pathNote, pickFolderInBrowser, type PickedFolder } from '../browserNative'
 import frontendCode from '../demos/pickFolder.ts?raw'
@@ -82,7 +83,7 @@ export function ChooseFolder() {
     <FeaturePage
       title="Choose a folder"
       lead="The same route as a file: the shell opens the dialog, the page passes the path on."
-      usesBackend
+      flow={<Flow steps={NATIVE_PATH_FLOW} label="how a native feature travels" />}
       demo={<Chooser />}
       snippets={SNIPPETS}
     >

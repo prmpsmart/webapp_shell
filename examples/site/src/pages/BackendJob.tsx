@@ -40,7 +40,6 @@ export function BackendJob() {
     <FeaturePage
       title="A long task in the backend"
       lead="Real work belongs in the backend. The page starts it and shows how far it is."
-      usesBackend={false}
       demo={<Runner />}
       snippets={SNIPPETS}
     >

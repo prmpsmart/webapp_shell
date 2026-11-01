@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { CodeTabs, Layer, type Snippet } from './CodeTabs'
-import { Flow } from './Flow'
 
 /** The backend tab of a feature whose whole job is in the page and the shell. */
 export const NO_BACKEND_CODE = `# Nothing to write here.
@@ -33,19 +32,20 @@ export function codeFor(frontend: Source, backend: Source | null, shell: Source 
 interface Props {
   title: string
   lead: string
-  usesBackend: boolean
+  /** The route the feature travels, as a diagram; none when it is a single call to the shell. */
+  flow?: ReactNode
   demo: ReactNode
   snippets: Snippet[]
   children?: ReactNode
 }
 
 /** Every native-function page has the same shape: what it is, the route, a live demonstration, the three snippets. */
-export function FeaturePage({ title, lead, usesBackend, demo, snippets, children }: Props) {
+export function FeaturePage({ title, lead, flow, demo, snippets, children }: Props) {
   return (
     <>
       <h1>{title}</h1>
       <p className="lead">{lead}</p>
-      {usesBackend ? <Flow /> : null}
+      {flow}
       {children}
       <h2>Try it</h2>
       {demo}
