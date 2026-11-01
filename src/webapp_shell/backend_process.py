@@ -123,5 +123,14 @@ class BackendProcess:
                     return
             except httpx.HTTPError:
                 time.sleep(0.2)
+        code = self._proc.poll() if self._proc is not None else None
         self.stop()
-        raise BackendError(self._say(MessageKey.BACKEND_NOT_STARTED))
+        if code is not None:
+            raise BackendError(self._say(MessageKey.BACKEND_EXITED, code=str(code)))
+        raise BackendError(
+            self._say(
+                MessageKey.BACKEND_NOT_STARTED,
+                path=self._wire.health_path,
+                seconds=f"{self._settings.startup_timeout:g}",
+            )
+        )

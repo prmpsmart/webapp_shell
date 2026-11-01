@@ -19,3 +19,5 @@ The first version (not yet published). What it holds:
 - Pyright strict also covers the examples; CI (3 systems, Python 3.13), a Pages workflow and a trusted-publishing release workflow (TestPyPI, then PyPI on a tag).
 - Package metadata (classifiers, URLs, keywords); the wheel and sdist pass `twine check`.
 - Name checked free on PyPI on 1 November 2026. Checked: Starlette 0.40 and 1.10, pywebview 6.2 and 6.2.1; a clean install of the built wheel runs the example.
+- Plainer start-up errors: a backend that stops while starting reports its exit code; one that never answers names the health path and the seconds waited.
+- On Windows, a missing WebView2 runtime is found before any window opens and reported in a message box with the download page (`webapp_shell.webview2`).

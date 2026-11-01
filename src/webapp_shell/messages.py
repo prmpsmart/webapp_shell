@@ -18,9 +18,11 @@ class MessageKey(StrEnum):
 
     FRONTEND_MISSING = "frontendMissing"
     BACKEND_NOT_STARTED = "backendNotStarted"
+    BACKEND_EXITED = "backendExited"
     VERSION_NOT_OBJECT = "versionNotObject"
     BACKEND_GAVE_UP = "backendGaveUp"
     LIBRARIES_PRESENT = "librariesPresent"
+    WEBVIEW2_MISSING = "webview2Missing"
 
 
 @dataclass(frozen=True)
@@ -28,10 +30,17 @@ class ShellMessages:
     """Every sentence, with its English default. `{name}` and `{path}` are filled in when the sentence is shown."""
 
     frontend_missing: str = "the compiled frontend is missing: {path}"
-    backend_not_started: str = "the backend did not start"
+    backend_not_started: str = (
+        "the backend did not answer {path} within {seconds} seconds; start it by hand to read what it says"
+    )
+    backend_exited: str = "the backend stopped while starting (exit code {code}); start it by hand to read what it says"
     version_not_object: str = "the version path did not answer with an object"
     backend_gave_up: str = "The backend stopped several times in a row. Close {name} and open it again."
     libraries_present: str = "all libraries are present"
+    webview2_missing: str = (
+        "{name} needs the Microsoft WebView2 runtime, which is not installed. "
+        "Install it from {url} and open {name} again."
+    )
 
     def text(self, key: MessageKey, **values: str) -> str:
         """The sentence for `key` with its placeholders filled."""

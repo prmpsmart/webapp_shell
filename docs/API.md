@@ -176,15 +176,19 @@ The few sentences the shell shows itself (in the splash page's error, and in wha
 - `class MessageKey(StrEnum)` — The name of each sentence. The member name, lower-cased, is the field of `ShellMessages`; the value is the key in the JSON catalogue. **(exported)**
   - `FRONTEND_MISSING`
   - `BACKEND_NOT_STARTED`
+  - `BACKEND_EXITED`
   - `VERSION_NOT_OBJECT`
   - `BACKEND_GAVE_UP`
   - `LIBRARIES_PRESENT`
+  - `WEBVIEW2_MISSING`
 - `class ShellMessages` — Every sentence, with its English default. `{name}` and `{path}` are filled in when the sentence is shown. **(exported)**
   - `frontend_missing: str`
   - `backend_not_started: str`
+  - `backend_exited: str`
   - `version_not_object: str`
   - `backend_gave_up: str`
   - `libraries_present: str`
+  - `webview2_missing: str`
   - `def text(self, key: MessageKey, **values: str) -> str`
   - `def sentences(self) -> dict[MessageKey, str]`
   - `def catalogue(self) -> JsonObject`
@@ -491,6 +495,23 @@ Notices when the engine has stopped by itself and starts it again, a few times, 
   - `def start(self) -> None`
   - `def stop(self) -> None`
   - `def check(self) -> None`
+
+## `webapp_shell.webview2`
+
+On Windows the pywebview window is drawn by the Microsoft WebView2 runtime (on Windows 11 and on most up-to-date Windows 10). Without it the window cannot open, and the person would see nothing at all; this finds it first, so the program can say what is missing in plain words.
+
+- `class RegistryHive(StrEnum)`
+  - `MACHINE`
+  - `USER`
+- `class RegistryLocation`
+  - `hive: RegistryHive`
+  - `subkey: str`
+- `def read_registry_version(location: RegistryLocation) -> str | None` — The runtime's version at `location`, or None when the key or the value is not there.
+- `class Webview2Check`
+  - `def __init__(self, platform: str=sys.platform, read_version: Callable[[RegistryLocation], str | None]=read_registry_version)`
+  - `def is_missing(self) -> bool`
+  - `def problem(self, name: str, messages: ShellMessages) -> str | None`
+- `def show_message_box(title: str, text: str) -> None` — A windowed program has no console, so a problem before any window exists is shown in the system's own box.
 
 ## `webapp_shell.webview_shell`
 

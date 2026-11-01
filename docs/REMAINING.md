@@ -11,7 +11,6 @@ At a glance: **B** code still to write, **C** the example site and the documenta
 Decided 31 October 2026: the page talks only to the shell and the backend never does, as in Pixeval. `shell/pixeval_shell` is stable (it runs in Pixeval on Windows and macOS, and Linux is expected to pass), so the library ports it and does not re-prove it.
 
 - [ ] **Decide what stays public.** `docs/API.md` lists every public name; the owner marks which are renamed with `_`. (Tests keep fakes that are not the real types, so pyright covers `src` and the examples only.)
-- [ ] **Errors a stranger will meet**, in plain words: missing `frontend/dist`, a backend that never answers its health path, a missing WebView2 on Windows (the first-run check reports it).
 
 ## C. The example site and the documentation
 

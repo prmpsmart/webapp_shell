@@ -6,13 +6,15 @@ dialog title that you did not write. (The native file dialogs use the operating 
 
 ## The sentences
 
-| Key (JSON)          | Field of `ShellMessages` | English default                                                             | Placeholders |
-| ------------------- | ------------------------ | --------------------------------------------------------------------------- | ------------ |
-| `frontendMissing`   | `frontend_missing`       | the compiled frontend is missing: {path}                                    | `{path}`     |
-| `backendNotStarted` | `backend_not_started`    | the backend did not start                                                   |              |
-| `versionNotObject`  | `version_not_object`     | the version path did not answer with an object                              |              |
-| `backendGaveUp`     | `backend_gave_up`        | The backend stopped several times in a row. Close {name} and open it again. | `{name}`     |
-| `librariesPresent`  | `libraries_present`      | all libraries are present                                                   |              |
+| Key (JSON)          | Field of `ShellMessages` | English default                                                                                                   | Placeholders                |
+| ------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `frontendMissing`   | `frontend_missing`       | the compiled frontend is missing: {path}                                                                          | `{path}`                    |
+| `backendNotStarted` | `backend_not_started`    | the backend did not answer {path} within {seconds} seconds; start it by hand to read what it says                 | `{path}`, `{seconds}`       |
+| `backendExited`     | `backend_exited`         | the backend stopped while starting (exit code {code}); start it by hand to read what it says                      | `{code}`                    |
+| `versionNotObject`  | `version_not_object`     | the version path did not answer with an object                                                                    |                             |
+| `backendGaveUp`     | `backend_gave_up`        | The backend stopped several times in a row. Close {name} and open it again.                                       | `{name}`                    |
+| `librariesPresent`  | `libraries_present`      | all libraries are present                                                                                         |                             |
+| `webview2Missing`   | `webview2_missing`       | {name} needs the Microsoft WebView2 runtime, which is not installed. Install it from {url} and open {name} again. | `{name}`, `{url}`, `{name}` |
 
 `MessageKey` (a `StrEnum`) names the keys; `ShellMessages` holds the sentences. A test keeps the two in step.
 
@@ -51,10 +53,12 @@ python -m webapp_shell messages > shell-messages.en.json
 ```json
 {
   "frontendMissing": "the compiled frontend is missing: {path}",
-  "backendNotStarted": "the backend did not start",
+  "backendNotStarted": "the backend did not answer {path} within {seconds} seconds; start it by hand to read what it says",
+  "backendExited": "the backend stopped while starting (exit code {code}); start it by hand to read what it says",
   "versionNotObject": "the version path did not answer with an object",
   "backendGaveUp": "The backend stopped several times in a row. Close {name} and open it again.",
-  "librariesPresent": "all libraries are present"
+  "librariesPresent": "all libraries are present",
+  "webview2Missing": "{name} needs the Microsoft WebView2 runtime, which is not installed. Install it from {url} and open {name} again."
 }
 ```
 
@@ -66,4 +70,5 @@ Translate the values, keep the keys. In Python, `ShellMessages().catalogue()` re
 - The names of the native functions and their errors (`"start" must be text`, `missing argument "path"`) are for the
   developer. A page that calls `pickFile` shows its own message when the call fails.
 - The splash page shows a spinner and, on failure, one of the sentences above. It has no other text.
+- On Windows, `webview2Missing` is shown in the system's own message box, because no window can open without the runtime.
 - Command-line help (`--smoke`, `--splash-seconds`) is for the developer and stays in English.

@@ -42,3 +42,31 @@ def test_a_project_without_a_version_path_gets_an_empty_version(config):
     wire = replace(config.backend.wire, version_path=None)
     settings = Settings.of(replace(config, backend=replace(config.backend, wire=wire)))
     assert BackendProcess(settings).version() == {}
+
+
+def _settings_for(config, tmp_path, module, source, timeout):
+    """A project whose backend is the one-line program `source`, found in `tmp_path`."""
+    import dataclasses
+
+    from webapp_shell.installation import Installation
+    from webapp_shell.settings import Settings
+
+    package = tmp_path / "backends" / module
+    package.mkdir(parents=True)
+    (package / "__init__.py").write_text("")
+    (package / "__main__.py").write_text(source)
+    backend = dataclasses.replace(config.backend, module=module, package_dirs=(tmp_path / "backends",), arguments=())
+    config = dataclasses.replace(config, backend=backend, startup_timeout=timeout)
+    return Settings.of(config, installation=Installation(config.source_root, frozen=False))
+
+
+def test_a_backend_that_stops_while_starting_says_so_with_its_exit_code(config, tmp_path):
+    settings = _settings_for(config, tmp_path, "quits_at_once", "raise SystemExit(3)", timeout=10.0)
+    with pytest.raises(BackendError, match=r"stopped while starting \(exit code 3\)"):
+        BackendProcess(settings).start()
+
+
+def test_a_backend_that_never_answers_names_the_path_and_the_time(config, tmp_path):
+    settings = _settings_for(config, tmp_path, "never_answers", "import time; time.sleep(30)", timeout=1.0)
+    with pytest.raises(BackendError, match=r"did not answer /api/health within 1 seconds"):
+        BackendProcess(settings).start()

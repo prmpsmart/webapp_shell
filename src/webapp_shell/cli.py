@@ -13,6 +13,7 @@ from .library_check import LibraryCheck
 from .messages import MessageKey
 from .preferences import ShellPreferences
 from .settings import Settings
+from .webview2 import Webview2Check, show_message_box
 
 
 def build_parser(config: ShellConfig) -> argparse.ArgumentParser:
@@ -54,6 +55,11 @@ def run(config: ShellConfig, argv: list[str] | None = None, installation: Instal
     if argv[:1] == [Installation.CHECK_LIBRARIES]:
         return check_libraries(config)
     args = build_parser(config).parse_args(argv)
+    if args.shell is ShellKind.WEBVIEW and not args.smoke:
+        problem = Webview2Check().problem(config.identity.name, config.messages)
+        if problem:
+            show_message_box(config.identity.name, problem)
+            return 1
 
     # a headless check never reads or writes the user's own preferences file
     preferences = ShellPreferences(None if args.smoke else config.identity.shell_preferences_path)
