@@ -63,3 +63,4 @@ ignore = ["E501", "RUF001", "RUF002", "RUF003"]
 include = ["src", "examples/minimal", "examples/site/app.py", "examples/site/native_functions.py", "examples/site/docs_backend"]
 typeCheckingMode = "strict"  # the library and the examples; the tests use fakes that are not the real types
 pythonVersion = "3.13"
+extraPaths = ["src", "tests", "examples/minimal", "examples/site"]  # where `webapp_shell`, `fake_backend` and the examples live
