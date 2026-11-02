@@ -3,7 +3,7 @@
 [![CI](https://github.com/prmpsmart/webapp_shell/actions/workflows/ci.yml/badge.svg)](https://github.com/prmpsmart/webapp_shell/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/webapp-shell)](https://pypi.org/project/webapp-shell/)
 [![Python](https://img.shields.io/pypi/pyversions/webapp-shell)](https://pypi.org/project/webapp-shell/)
-[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/prmpsmart/webapp_shell/blob/main/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-site-3556d6)](https://prmpsmart.github.io/webapp_shell)
 
 A desktop window for a web app made of a **Python backend** and a **compiled frontend**. Your project describes itself
@@ -91,15 +91,15 @@ for the token guard) and `freeze` (PyInstaller, for the next step), for example 
 
 Freezing: describe the program in a `FreezePlan` and run `python -m webapp_shell freeze plan:PLAN qt webview`. The
 library writes the entry file and the PyInstaller spec, keeps the other window toolkit out of each build and checks the
-finished folder (see [freezing](docs/FREEZING.md)).
+finished folder (see [freezing](https://github.com/prmpsmart/webapp_shell/blob/main/docs/FREEZING.md)).
 
 On Windows the pywebview window needs the WebView2 runtime (present on Windows 11); `pythonnet` is installed by pywebview.
 
 A runnable minimal program is in `examples/minimal/`, and `examples/site/` is the documentation website, opened by the
 library's own shell, with a live demonstration of every feature.
 
-Guides (`docs/`): [the contract](docs/CONTRACT.md), [configuration](docs/CONFIGURATION.md),
-[native functions](docs/NATIVE_FUNCTIONS.md), [freezing with PyInstaller](docs/FREEZING.md),
-[translating](docs/TRANSLATING.md), [troubleshooting](docs/TROUBLESHOOTING.md), and the generated
-[API listing](docs/API.md) (the public API: nothing that is not listed there is promised). The same guides are pages of
-the documentation site. To work on the library, read [CONTRIBUTING.md](CONTRIBUTING.md).
+Guides (`docs/`): [the contract](https://github.com/prmpsmart/webapp_shell/blob/main/docs/CONTRACT.md), [configuration](https://github.com/prmpsmart/webapp_shell/blob/main/docs/CONFIGURATION.md),
+[native functions](https://github.com/prmpsmart/webapp_shell/blob/main/docs/NATIVE_FUNCTIONS.md), [freezing with PyInstaller](https://github.com/prmpsmart/webapp_shell/blob/main/docs/FREEZING.md),
+[translating](https://github.com/prmpsmart/webapp_shell/blob/main/docs/TRANSLATING.md), [troubleshooting](https://github.com/prmpsmart/webapp_shell/blob/main/docs/TROUBLESHOOTING.md), and the generated
+[API listing](https://github.com/prmpsmart/webapp_shell/blob/main/docs/API.md) (the public API: nothing that is not listed there is promised). The same guides are pages of
+the documentation site. To work on the library, read [CONTRIBUTING.md](https://github.com/prmpsmart/webapp_shell/blob/main/CONTRIBUTING.md).

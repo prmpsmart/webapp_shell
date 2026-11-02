@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "webapp-shell"
-version = "0.1"
+version = "0.2"
 description = "A desktop window for a web app made of a Python backend and a compiled frontend."
 readme = "README.md"
 requires-python = ">=3.13"

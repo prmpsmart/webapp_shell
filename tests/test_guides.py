@@ -57,3 +57,9 @@ def test_the_examples_use_only_the_public_modules(path):
         return
     for module in library_imports(path.read_text(encoding="utf-8")):
         assert module in PUBLIC, f"{path.name} imports {module}, which is not public"
+
+
+def test_the_readme_has_no_relative_links():
+    """PyPI shows the README away from the repository: a relative link there leads to a 404."""
+    links = re.findall(r"\]\(([^)]+)\)", (ROOT / "README.md").read_text(encoding="utf-8"))
+    assert [link for link in links if not link.startswith(("https://", "http://", "#"))] == []
